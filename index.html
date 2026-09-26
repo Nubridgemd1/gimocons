@@ -129,7 +129,17 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--sky)} te
 .opt{border:1.5px solid var(--line);border-radius:12px;padding:12px 14px;cursor:pointer;display:flex;gap:10px;align-items:center;font-weight:600;font-family:var(--hd);font-size:14px} .opt:hover{border-color:var(--sky)}
 .opt.sel{border-color:var(--sky);background:var(--sky-soft);color:var(--sky-dd)} .opt input{width:auto}
 .fare{display:flex;justify-content:space-between;align-items:center;background:var(--lime-soft);border:1px solid var(--lime);border-radius:12px;padding:12px 16px;margin-top:14px;font-family:var(--hd)} .fare b{font-size:22px}
-.formfoot{display:flex;justify-content:space-between;gap:10px;margin-top:18px}
+.formfoot{display:flex;justify-content:space-between;gap:10px;margin-top:18px;flex-wrap:wrap}
+.stepsb .s{line-height:1.15}
+.fare{flex-wrap:wrap;gap:6px}
+@media(max-width:600px){
+  .book{padding:20px}
+  .form{padding:16px}
+  .stepsb{gap:6px}
+  .stepsb .s{font-size:11px;padding:8px 8px;gap:6px}
+  .stepsb .s .n{width:20px;height:20px;font-size:11px}
+  .formfoot .btn{flex:1 1 auto}
+}
 .confirm{text-align:center;padding:20px 6px}
 .confirm .chk{width:74px;height:74px;border-radius:50%;background:var(--lime-soft);display:grid;place-items:center;margin:0 auto 14px}
 .ref{font-family:var(--hd);font-weight:800;font-size:24px;color:var(--sky-d);letter-spacing:.04em}
@@ -319,6 +329,17 @@ var photoOverrides=LS.get("gimo_photos",{});
 function pimg(slot,id,w){ return photoOverrides[slot] ? photoOverrides[slot] : IMG(id,w); }
 function toast(m){var t=document.getElementById('toast');t.textContent=m;t.classList.add('show');clearTimeout(t._);t._=setTimeout(function(){t.classList.remove('show')},2600);}
 function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+/* Real-time delivery of bookings & messages via email (FormSubmit). SMS targets can be added once a gateway/carrier is set. */
+var NOTIFY_SMS=[]; /* e.g. ["6124831250@vtext.com","2819359597@txt.att.net"] once carrier confirmed */
+function notify(kind,d){
+  try{
+    var subject=(kind==='ride'?('New ride request '+(d.ref||'')):'New website message')+' — GIMO Consulting Services';
+    var body={_subject:subject,_template:'table',Type:(kind==='ride'?'Ride request':'Message')};
+    Object.keys(d).forEach(function(k){ if(['sig','cnum','cexp','ccvc','paid'].indexOf(k)>=0)return; if(d[k]!=null&&d[k]!=='') body[k]=d[k]; });
+    var targets=[contact.email].concat(NOTIFY_SMS);
+    targets.forEach(function(t){ if(!t)return; fetch('https://formsubmit.co/ajax/'+encodeURIComponent(t),{method:'POST',headers:{'Content-Type':'application/json',Accept:'application/json'},body:JSON.stringify(body)}).catch(function(){}); });
+  }catch(e){}
+}
 
 var services=[
  {ic:'🚶',t:'Ambulatory transport',d:'Door-to-door rides for clients who can walk with little or no assistance.'},
@@ -414,10 +435,10 @@ function pick(){var mm=document.querySelector('input[name=mob]:checked'),pp=docu
 function grab(ids){ids.forEach(function(id){var el=document.getElementById('f_'+id);if(el)bk.data[id]=el.value;});}
 function next1(){grab(['name','phone','email','from','to','date','time','miles']);bk.data.trip=document.getElementById('f_trip').value;if(!bk.data.name||!bk.data.phone||!bk.data.from||!bk.data.to||!bk.data.date||!bk.data.time){toast('Please complete the required fields');return;}bk.step=2;renderBook();}
 function next2(){var n=document.getElementById('f_notes');if(n)bk.data.notes=n.value;var cn=document.getElementById('c_num');if(cn){bk.data.cnum=cn.value;bk.data.cexp=document.getElementById('c_exp').value;bk.data.ccvc=document.getElementById('c_cvc').value;}if(!bk.data.mobility){toast('Choose a mobility option');return;}if(!bk.data.pay){toast('Choose a payment method');return;}if(bk.data.pay=='Credit / Debit card'&&(!bk.data.cnum||!bk.data.cexp||!bk.data.ccvc)){toast('Enter card details (demo)');return;}bk.step=3;renderBook();}
-function submitBook(){var d=bk.data;d.ref='GC-'+Math.random().toString(36).slice(2,7).toUpperCase();d.created=new Date().toISOString();d.fare=fare();d.paid=(d.pay=='Credit / Debit card');var save=Object.assign({},d);delete save.cnum;delete save.cexp;delete save.ccvc;bookings.unshift(save);LS.set('gimo_bookings',bookings);renderBook();toast('Ride request submitted');}
+function submitBook(){var d=bk.data;d.ref='GC-'+Math.random().toString(36).slice(2,7).toUpperCase();d.created=new Date().toISOString();d.fare=fare();d.paid=(d.pay=='Credit / Debit card');var save=Object.assign({},d);delete save.cnum;delete save.cexp;delete save.ccvc;bookings.unshift(save);LS.set('gimo_bookings',bookings);notify('ride',save);renderBook();toast('Ride request submitted');}
 function resetBook(){bk={step:1,data:{}};renderBook();}
 
-document.getElementById('msgForm').addEventListener('submit',function(e){e.preventDefault();var f=e.target;bookings.unshift({name:f.name.value,phone:f.phone.value,email:f.email.value,msg:f.msg.value,type:'message',created:new Date().toISOString()});LS.set('gimo_bookings',bookings);f.reset();toast('Message sent — we’ll reply shortly');});
+document.getElementById('msgForm').addEventListener('submit',function(e){e.preventDefault();var f=e.target;var m={name:f.name.value,phone:f.phone.value,email:f.email.value,msg:f.msg.value,type:'message',created:new Date().toISOString()};bookings.unshift(m);LS.set('gimo_bookings',bookings);notify('message',m);f.reset();toast('Message sent — we’ll reply shortly');});
 
 function openAdmin(){var ok=LS.get('gimo_admin_ok',false);
   if(!ok){document.getElementById('adminContent').innerHTML='<h2 style="font-size:22px;margin-bottom:6px">Admin sign-in</h2><p style="color:var(--grey);font-size:14px;margin-bottom:16px">Sign in to manage photos, contact details and requests.</p><div class="field"><label>Username</label><input id="auser" placeholder="admin"></div><div class="field" style="margin-top:10px"><label>Password</label><input id="apass" type="password" placeholder="••••••••" onkeydown="if(event.key===\'Enter\')adminLogin()"></div><button class="btn pri" style="margin-top:14px" onclick="adminLogin()">Sign in</button><p style="color:var(--grey-l);font-size:12px;margin-top:12px">Default: <b>admin</b> / <b>gimo2026</b> — change these under <b>Security</b> after signing in.</p>';}
