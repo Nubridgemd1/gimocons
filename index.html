@@ -260,7 +260,7 @@ table.bk{width:100%;border-collapse:collapse;font-size:13px} table.bk th,table.b
 </section>
 
 <section class="sec" id="gallery">
-  <div class="wrap"><span class="eyebrow">Gallery</span><h2 style="margin-top:6px">A closer look at the ride</h2><div class="gal" id="gal" style="margin-top:28px"></div></div>
+  <div class="wrap"><span class="eyebrow">Gallery</span><h2 style="margin-top:6px">A closer look at the ride</h2><p class="lead">Swipe through moments from our vehicles, team and everyday journeys — tap any photo to enlarge.</p><div class="reelrow" id="gal" style="margin-top:24px"></div></div>
 </section>
 
 <section class="sec" id="reels" style="background:var(--soft)">
@@ -381,7 +381,7 @@ var flyers=[
 function render(){
   document.getElementById('heroImg').src=pimg('hero',PIX.hero,900);
   document.getElementById('svcGrid').innerHTML=services.map(function(s){return '<div class="card svc">'+(s.tag?'<span class="tag">'+s.tag+'</span>':'')+'<div class="ic">'+s.ic+'</div><h3>'+esc(s.t)+'</h3><p>'+esc(s.d)+'</p></div>'}).join('');
-  document.getElementById('gal').innerHTML=gallery.map(function(g,i){return '<div class="t'+(g.big?' big':'')+'" onclick="lightbox('+i+')"><img loading="lazy" src="'+pimg('g'+i,PIX.g[i],700)+'" alt="'+esc(g.c)+'"><span>'+esc(g.c)+'</span></div>'}).join('');
+  document.getElementById('gal').innerHTML=gallery.map(function(g,i){return '<div class="reel" onclick="lightbox('+i+')"><img loading="lazy" src="'+pimg('g'+i,PIX.g[i],500)+'" alt="'+esc(g.c)+'"><div class="play"><i><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="21" y2="21"/></svg></i></div><div class="cap"><b>'+esc(g.c)+'</b></div></div>'}).join('');
   document.getElementById('reelRow').innerHTML=reels.map(function(r,i){return '<div class="reel" onclick="openReel('+i+')"><img loading="lazy" src="'+pimg('r'+i,PIX.reel[i],500)+'" alt="'+esc(r.t)+'"><div class="play"><i>▶</i></div><div class="cap"><b>'+esc(r.t)+'</b><span>'+esc(r.x)+'</span></div></div>'}).join('');
   document.getElementById('testi').innerHTML=testimonials.map(function(t){return '<div class="tcard"><div class="stars">★★★★★</div><p>“'+esc(t.q)+'”</p><div class="who"><div class="av">'+esc(t.n[0])+'</div><div><b style="font-family:var(--hd)">'+esc(t.n)+'</b><div style="font-size:12.5px;color:var(--grey-l)">'+esc(t.r)+'</div></div></div></div>'}).join('');
   document.getElementById('blogGrid').innerHTML=blog.map(function(b,i){return '<article class="bcard" onclick="openPost('+i+')"><div class="thumb"><img loading="lazy" src="'+pimg('b'+i,PIX.blog[i],600)+'" alt="'+esc(b.t)+'"></div><div class="bd"><span class="cat">'+esc(b.c)+'</span><h3>'+esc(b.t)+'</h3><p>'+esc(b.x)+'</p><div class="meta"><span>🕐 '+esc(b.rt)+' read</span><span>💬 '+((comments[i]||[]).length)+'</span></div></div></article>'}).join('');
