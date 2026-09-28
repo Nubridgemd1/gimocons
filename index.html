@@ -9,20 +9,21 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap">
 <style>
 :root{
-  --sky:#2aa3e6; --sky-d:#1683c4; --sky-dd:#0f6aa3; --sky-soft:#e7f4fd;
-  --grey:#5c6b7a; --grey-l:#8394a3; --ink:#14303f; --line:#e4eaf0;
-  --bg:#f4f7fa; --card:#ffffff; --soft:#eef3f8;
-  --lime:#bfe83f; --lime-d:#9fce1f; --lime-soft:#f2fbd6;
-  --shadow:0 10px 30px rgba(20,48,63,.08); --shadow-lg:0 24px 60px rgba(20,48,63,.18);
+  /* CoDevProperty palette (exact hex): navy + bronze + cream */
+  --sky:#a9782f; --sky-d:#96691f; --sky-dd:#0f2233; --sky-soft:#f6f8f9;
+  --grey:#5a6b78; --grey-l:#8a97a2; --ink:#26333f; --line:#e4e8ec;
+  --bg:#faf8f4; --card:#ffffff; --soft:#f6f8f9;
+  --lime:#0f2233; --lime-d:#1c3a52; --lime-soft:#eef1f4;
+  --shadow:0 10px 30px rgba(15,34,51,.08); --shadow-lg:0 24px 60px rgba(15,34,51,.18);
   --radius:18px; --maxw:1180px; --hd:'Poppins',system-ui,sans-serif; --bd:'Inter',system-ui,sans-serif;
 }
 @media (prefers-color-scheme:dark){ :root:not([data-theme="light"]){
-  --sky:#3fb0ef; --sky-d:#2aa3e6; --sky-soft:#0e2735; --ink:#eaf3fa; --grey:#a7b6c4; --grey-l:#7d8fa0;
-  --line:#243947; --bg:#0b1a25; --card:#122531; --soft:#16303f; --lime-soft:#1d3320; --shadow:0 10px 30px rgba(0,0,0,.35); --shadow-lg:0 24px 60px rgba(0,0,0,.5);
+  --sky:#c79a4f; --sky-d:#a9782f; --sky-dd:#c79a4f; --sky-soft:#17242f; --ink:#eaf1f8; --grey:#9fb0be; --grey-l:#7d8fa0;
+  --line:#24333f; --bg:#0f2233; --card:#152a3c; --soft:#16283a; --lime:#1c3a52; --lime-d:#274a6b; --lime-soft:#16222e; --shadow:0 10px 30px rgba(0,0,0,.4); --shadow-lg:0 24px 60px rgba(0,0,0,.55);
 }}
 :root[data-theme="dark"]{
-  --sky:#3fb0ef; --sky-d:#2aa3e6; --sky-soft:#0e2735; --ink:#eaf3fa; --grey:#a7b6c4; --grey-l:#7d8fa0;
-  --line:#243947; --bg:#0b1a25; --card:#122531; --soft:#16303f; --lime-soft:#1d3320; --shadow:0 10px 30px rgba(0,0,0,.35); --shadow-lg:0 24px 60px rgba(0,0,0,.5);
+  --sky:#c79a4f; --sky-d:#a9782f; --sky-dd:#c79a4f; --sky-soft:#17242f; --ink:#eaf1f8; --grey:#9fb0be; --grey-l:#7d8fa0;
+  --line:#24333f; --bg:#0f2233; --card:#152a3c; --soft:#16283a; --lime:#1c3a52; --lime-d:#274a6b; --lime-soft:#16222e; --shadow:0 10px 30px rgba(0,0,0,.4); --shadow-lg:0 24px 60px rgba(0,0,0,.55);
 }
 *{box-sizing:border-box}
 html,body{overflow-x:hidden}
@@ -34,8 +35,8 @@ a{color:inherit;text-decoration:none} img{max-width:100%;display:block}
 h1,h2,h3,p,.sub{overflow-wrap:break-word}
 .wrap{max-width:var(--maxw);margin:0 auto;padding:0 20px}
 .btn{display:inline-flex;align-items:center;gap:8px;border:0;cursor:pointer;font-family:var(--hd);font-weight:600;font-size:15px;padding:12px 20px;border-radius:999px;transition:.18s;justify-content:center;text-align:center}
-.btn.pri{background:var(--sky);color:#fff;box-shadow:0 8px 20px rgba(42,163,230,.32)} .btn.pri:hover{background:var(--sky-d);transform:translateY(-1px)}
-.btn.lime{background:var(--lime);color:#22350a} .btn.lime:hover{background:var(--lime-d);transform:translateY(-1px)}
+.btn.pri{background:var(--sky);color:#fff;box-shadow:0 8px 20px rgba(169,120,47,.32)} .btn.pri:hover{background:var(--sky-d);transform:translateY(-1px)}
+.btn.lime{background:var(--lime);color:#ffffff} .btn.lime:hover{background:var(--lime-d);transform:translateY(-1px)}
 .btn.ghost{background:transparent;border:1.5px solid var(--line);color:var(--ink)} .btn.ghost:hover{border-color:var(--sky);color:var(--sky-d)}
 .btn.sm{padding:8px 14px;font-size:13.5px}
 .eyebrow{font-family:var(--hd);font-weight:700;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--sky-d)}
@@ -92,7 +93,7 @@ header.nav{position:sticky;top:0;z-index:50;background:color-mix(in srgb,var(--b
 .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;counter-reset:s}
 @media(max-width:760px){.steps{grid-template-columns:1fr}}
 .step{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:26px 22px;position:relative;counter-increment:s}
-.step:before{content:counter(s);position:absolute;top:-16px;left:22px;width:38px;height:38px;border-radius:12px;background:var(--sky);color:#fff;font-family:var(--hd);font-weight:800;display:grid;place-items:center;box-shadow:0 6px 16px rgba(42,163,230,.4)}
+.step:before{content:counter(s);position:absolute;top:-16px;left:22px;width:38px;height:38px;border-radius:12px;background:var(--sky);color:#fff;font-family:var(--hd);font-weight:800;display:grid;place-items:center;box-shadow:0 6px 16px rgba(169,120,47,.4)}
 .step h3{margin:12px 0 6px;font-size:18px} .step p{color:var(--grey);font-size:14.5px;margin:0}
 
 .gal{display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:150px;gap:14px}
@@ -104,7 +105,7 @@ header.nav{position:sticky;top:0;z-index:50;background:color-mix(in srgb,var(--b
 
 .reelrow{display:flex;gap:16px;overflow-x:auto;padding:6px 2px 16px;scroll-snap-type:x mandatory}
 .reelrow::-webkit-scrollbar{height:8px}.reelrow::-webkit-scrollbar-thumb{background:var(--line);border-radius:99px}
-.reel{flex:0 0 210px;aspect-ratio:9/16;border-radius:18px;overflow:hidden;position:relative;cursor:pointer;scroll-snap-align:start;border:1px solid var(--line);background:#0c1b26}
+.reel{flex:0 0 210px;aspect-ratio:9/16;border-radius:18px;overflow:hidden;position:relative;cursor:pointer;scroll-snap-align:start;border:1px solid var(--line);background:#0f2233}
 .reel img{width:100%;height:100%;object-fit:cover;animation:kb 12s ease-in-out infinite alternate}
 @keyframes kb{from{transform:scale(1)}to{transform:scale(1.12)}}
 .reel .play{position:absolute;inset:0;display:grid;place-items:center}
@@ -119,7 +120,7 @@ header.nav{position:sticky;top:0;z-index:50;background:color-mix(in srgb,var(--b
 .stepsb .s{flex:1;min-width:0;font-family:var(--hd);font-weight:600;font-size:12.5px;color:var(--grey-l);padding:9px 12px;border-radius:10px;background:var(--soft);display:flex;gap:8px;align-items:center}
 .stepsb .s .n{width:22px;height:22px;border-radius:50%;background:var(--line);color:var(--card);display:grid;place-items:center;font-size:12px;flex:none}
 .stepsb .s.on{color:var(--sky-dd);background:var(--sky-soft)} .stepsb .s.on .n{background:var(--sky);color:#fff}
-.stepsb .s.done{color:var(--lime-d)} .stepsb .s.done .n{background:var(--lime);color:#22350a}
+.stepsb .s.done{color:var(--lime-d)} .stepsb .s.done .n{background:var(--lime);color:#ffffff}
 .fgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px} @media(max-width:620px){.fgrid{grid-template-columns:1fr}}
 .field{display:flex;flex-direction:column;gap:5px} .field.full{grid-column:1/-1}
 label{font-size:12.5px;font-weight:600;font-family:var(--hd);color:var(--grey)}
@@ -156,7 +157,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--sky)} te
 .flyer .fnum{position:absolute;top:12px;right:14px;font-family:var(--hd);font-weight:800;font-size:13px;background:rgba(255,255,255,.28);padding:3px 9px;border-radius:999px}
 .flyer h4{font-size:22px;font-weight:800;letter-spacing:-.01em;line-height:1.1}
 .flyer .fsub{font-size:13px;margin-top:8px;opacity:.95}
-.flyer .fcta{margin-top:auto;align-self:flex-start;background:var(--lime);color:#22350a;font-family:var(--hd);font-weight:700;font-size:12.5px;padding:7px 13px;border-radius:999px}
+.flyer .fcta{margin-top:auto;align-self:flex-start;background:var(--lime);color:#ffffff;font-family:var(--hd);font-weight:700;font-size:12.5px;padding:7px 13px;border-radius:999px}
 
 .tcard{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:24px} .tcard p{font-size:15px;margin:0 0 16px}
 .tcard .who{display:flex;gap:11px;align-items:center} .tcard .av{width:42px;height:42px;border-radius:50%;background:var(--sky-soft);display:grid;place-items:center;font-family:var(--hd);font-weight:700;color:var(--sky-d)}
@@ -167,15 +168,15 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--sky)} te
 .cinfo .ci{display:flex;gap:13px;align-items:flex-start;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px}
 .cinfo .ci .ic{width:42px;height:42px;border-radius:11px;background:var(--sky-soft);color:var(--sky-d);display:grid;place-items:center;flex:none;font-size:18px}
 .cinfo .ci b{font-family:var(--hd);font-size:15px} .cinfo .ci span{color:var(--grey);font-size:14px}
-footer{background:var(--ink);color:#cfe0ec;margin-top:20px}
+footer{background:var(--ink);color:#c6d2de;margin-top:20px}
 footer .wrap{padding:44px 20px 28px;display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:30px} @media(max-width:760px){footer .wrap{grid-template-columns:1fr}}
-footer h4{color:#fff;font-size:15px;margin-bottom:12px} footer a{display:block;color:#a9c2d3;padding:4px 0;font-size:14px} footer a:hover{color:#fff}
-.foot-bottom{border-top:1px solid rgba(255,255,255,.12);text-align:center;padding:16px;font-size:12.5px;color:#8fa9bb}
+footer h4{color:#fff;font-size:15px;margin-bottom:12px} footer a{display:block;color:#c6d2de;padding:4px 0;font-size:14px} footer a:hover{color:#fff}
+.foot-bottom{border-top:1px solid rgba(255,255,255,.12);text-align:center;padding:16px;font-size:12.5px;color:#8a97a2}
 
 .modal{position:fixed;inset:0;z-index:100;display:none;align-items:center;justify-content:center;padding:18px} .modal.open{display:flex}
 .modal .ov{position:absolute;inset:0;background:rgba(8,20,28,.62);backdrop-filter:blur(3px)}
 .modal .box{position:relative;background:var(--card);border-radius:20px;max-width:760px;width:100%;max-height:90vh;overflow:auto;box-shadow:var(--shadow-lg)} .modal .box.sm{max-width:460px}
-.modal .x{position:absolute;top:14px;right:14px;z-index:2;width:38px;height:38px;border-radius:50%;border:0;background:rgba(255,255,255,.9);cursor:pointer;font-size:18px;color:#14303f}
+.modal .x{position:absolute;top:14px;right:14px;z-index:2;width:38px;height:38px;border-radius:50%;border:0;background:rgba(255,255,255,.9);cursor:pointer;font-size:18px;color:#26333f}
 .mpad{padding:30px}
 .read h2{font-size:26px;margin:8px 0 10px;font-weight:800} .read .rmeta{color:var(--grey-l);font-size:13px;margin-bottom:16px}
 .read .rhero{aspect-ratio:16/8;border-radius:14px;overflow:hidden;margin-bottom:18px} .read .rhero img{width:100%;height:100%;object-fit:cover}
@@ -195,7 +196,7 @@ table.bk{width:100%;border-collapse:collapse;font-size:13px} table.bk th,table.b
 <header class="nav">
   <div class="wrap row">
     <a class="brand" href="#top">
-      <svg width="40" height="40" viewBox="0 0 40 40" aria-hidden="true"><rect width="40" height="40" rx="12" fill="#2aa3e6"/><path d="M9 25c0-1 .8-2 2-2h1l1.4-4.2c.3-.9 1.1-1.5 2-1.5h7.2c.9 0 1.7.6 2 1.5L28 23h1c1.2 0 2 1 2 2v3h-2a2.5 2.5 0 01-5 0h-8a2.5 2.5 0 01-5 0H9v-3z" fill="#fff"/><circle cx="14.5" cy="28" r="1.8" fill="#14303f"/><circle cx="25.5" cy="28" r="1.8" fill="#14303f"/><path d="M15 22l1-3h8l1 3h-10z" fill="#bfe83f"/></svg>
+      <svg width="40" height="40" viewBox="0 0 40 40" aria-hidden="true"><rect width="40" height="40" rx="12" fill="#0f2233"/><path d="M9 25c0-1 .8-2 2-2h1l1.4-4.2c.3-.9 1.1-1.5 2-1.5h7.2c.9 0 1.7.6 2 1.5L28 23h1c1.2 0 2 1 2 2v3h-2a2.5 2.5 0 01-5 0h-8a2.5 2.5 0 01-5 0H9v-3z" fill="#fff"/><circle cx="14.5" cy="28" r="1.8" fill="#26333f"/><circle cx="25.5" cy="28" r="1.8" fill="#26333f"/><path d="M15 22l1-3h8l1 3h-10z" fill="#a9782f"/></svg>
       <span>GIMO<small>Consulting Services · NEMT</small></span>
     </a>
     <nav class="navlinks">
@@ -268,7 +269,7 @@ table.bk{width:100%;border-collapse:collapse;font-size:13px} table.bk th,table.b
 
 <section class="sec" id="book">
   <div class="wrap"><div class="book"><div class="blob" style="background:#fff;opacity:.12;width:260px;height:260px;top:-80px;right:-40px"></div>
-    <span class="eyebrow" style="color:#dff1cf">Book a ride</span><h2 style="margin-top:6px">Reserve your transport</h2><p class="lead">Fill in your trip and we’ll confirm by phone or email. Secure payment options available.</p>
+    <span class="eyebrow" style="color:#c79a4f">Book a ride</span><h2 style="margin-top:6px">Reserve your transport</h2><p class="lead">Fill in your trip and we’ll confirm by phone or email. Secure payment options available.</p>
     <div class="form" id="bookForm"></div>
   </div></div>
 </section>
@@ -299,8 +300,8 @@ table.bk{width:100%;border-collapse:collapse;font-size:13px} table.bk th,table.b
 <footer>
   <div class="wrap">
     <div>
-      <div class="brand" style="color:#fff"><svg width="34" height="34" viewBox="0 0 40 40" style="border-radius:10px"><rect width="40" height="40" rx="12" fill="#2aa3e6"/><path d="M9 25c0-1 .8-2 2-2h1l1.4-4.2c.3-.9 1.1-1.5 2-1.5h7.2c.9 0 1.7.6 2 1.5L28 23h1c1.2 0 2 1 2 2v3h-2a2.5 2.5 0 01-5 0h-8a2.5 2.5 0 01-5 0H9v-3z" fill="#fff"/><path d="M15 22l1-3h8l1 3h-10z" fill="#bfe83f"/></svg><span style="color:#fff">GIMO<small style="color:#8fa9bb">Consulting Services · NEMT</small></span></div>
-      <p style="color:#a9c2d3;font-size:14px;margin-top:12px;max-width:320px">Compassionate non-emergency medical transportation, keeping your community connected to care.</p>
+      <div class="brand" style="color:#fff"><svg width="34" height="34" viewBox="0 0 40 40" style="border-radius:10px"><rect width="40" height="40" rx="12" fill="#0f2233"/><path d="M9 25c0-1 .8-2 2-2h1l1.4-4.2c.3-.9 1.1-1.5 2-1.5h7.2c.9 0 1.7.6 2 1.5L28 23h1c1.2 0 2 1 2 2v3h-2a2.5 2.5 0 01-5 0h-8a2.5 2.5 0 01-5 0H9v-3z" fill="#fff"/><path d="M15 22l1-3h8l1 3h-10z" fill="#a9782f"/></svg><span style="color:#fff">GIMO<small style="color:#8a97a2">Consulting Services · NEMT</small></span></div>
+      <p style="color:#c6d2de;font-size:14px;margin-top:12px;max-width:320px">Compassionate non-emergency medical transportation, keeping your community connected to care.</p>
     </div>
     <div><h4>Company</h4><a href="#services">Services</a><a href="#gallery">Gallery</a><a href="#blog">Blog</a><a href="#contact">Contact</a></div>
     <div><h4>Get in touch</h4><a id="fphone" href="#">—</a><a id="fphone2" href="#">—</a><a id="femail" href="#">—</a><a href="#book" style="color:var(--lime);font-weight:700">Book a ride →</a></div>
@@ -366,16 +367,16 @@ var blog=[
  {c:'Basics',t:'Stretcher Transport vs. Ambulance: The Difference',rt:'3 min',x:'When you need one, not the other.',body:['Stretcher (gurney) transport is for clients who must lie down but are medically stable and don’t need emergency treatment.','An ambulance is for emergencies requiring clinical care en route. NEMT is planned, comfortable and far more affordable.','If you’re unsure which you need, call us — we’ll help you choose the right option.']},
  {c:'Caregivers',t:'Caregiver’s Checklist for Booking Medical Transport',rt:'5 min',x:'Everything to have ready for a smooth booking.',body:['Have the pickup and destination addresses, appointment time, and any return time ready before you call or book online.','Note mobility needs, oxygen or equipment, and whether a companion is riding along.','Keep insurance or Medicaid details handy if you’re requesting covered transport, and save your driver-update number.']}];
 var flyers=[
- {t:'Never Miss an Appointment',s:'Door-to-door medical rides, always on time.',c:'#0f6aa3'},
- {t:'Wheelchair-Accessible Rides',s:'Lift-equipped vans · 4-point securement.',c:'#1683c4'},
- {t:'Dialysis Transport Program',s:'Reliable standing schedules, every session.',c:'#0f6aa3'},
- {t:'Rides for Seniors',s:'Friendly, patient, door-through-door care.',c:'#1683c4'},
- {t:'Home After Discharge',s:'Comfortable rides the moment you’re cleared.',c:'#0f6aa3'},
- {t:'Book in 60 Seconds',s:'Online or by phone — instant confirmation.',c:'#1683c4'},
- {t:'Coverage Made Simple',s:'We help you check Medicaid & plan benefits.',c:'#0f6aa3'},
- {t:'Partner With GIMO',s:'Facilities & clinics: standing accounts welcome.',c:'#14303f'},
- {t:'Safe & Sanitized',s:'Cleaned between every ride, for your health.',c:'#1683c4'},
- {t:'24/7 Scheduling',s:'Plan ahead any hour — we’re here for you.',c:'#0f6aa3'}];
+ {t:'Never Miss an Appointment',s:'Door-to-door medical rides, always on time.',c:'#0f2233'},
+ {t:'Wheelchair-Accessible Rides',s:'Lift-equipped vans · 4-point securement.',c:'#a9782f'},
+ {t:'Dialysis Transport Program',s:'Reliable standing schedules, every session.',c:'#0f2233'},
+ {t:'Rides for Seniors',s:'Friendly, patient, door-through-door care.',c:'#a9782f'},
+ {t:'Home After Discharge',s:'Comfortable rides the moment you’re cleared.',c:'#0f2233'},
+ {t:'Book in 60 Seconds',s:'Online or by phone — instant confirmation.',c:'#a9782f'},
+ {t:'Coverage Made Simple',s:'We help you check Medicaid & plan benefits.',c:'#0f2233'},
+ {t:'Partner With GIMO',s:'Facilities & clinics: standing accounts welcome.',c:'#26333f'},
+ {t:'Safe & Sanitized',s:'Cleaned between every ride, for your health.',c:'#a9782f'},
+ {t:'24/7 Scheduling',s:'Plan ahead any hour — we’re here for you.',c:'#0f2233'}];
 
 function render(){
   document.getElementById('heroImg').src=pimg('hero',PIX.hero,900);
@@ -424,7 +425,7 @@ function renderBook(){var d=bk.data;
   } else if(bk.step==3 && !d.ref){
     html+='<div class="card" style="background:var(--soft);border:0">'+row('Rider',d.name)+row('Contact',(d.phone||'')+(d.email?' · '+d.email:''))+row('From',d.from)+row('To',d.to)+row('When',(d.date||'')+' at '+(d.time||'')+' · '+(d.trip||''))+row('Mobility',d.mobility)+row('Payment',d.pay)+row('Distance',d.miles?d.miles+' mi':'—')+(d.notes?row('Notes',d.notes):'')+'<div class="fare"><span>Estimated fare</span><b>'+fareText()+'</b></div></div><div class="formfoot"><button class="btn ghost" onclick="bk.step=2;renderBook()">← Back</button><button class="btn lime" onclick="submitBook()">✓ Confirm &amp; '+(d.pay=='Credit / Debit card'?'Pay':'Request')+'</button></div>';
   } else if(d.ref){
-    html='<div class="confirm"><div class="chk"><svg width="34" height="34" viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="#9fce1f" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></div><h3 style="font-size:22px">Ride requested!</h3><p style="color:var(--grey);margin:8px 0">Your confirmation reference is</p><div class="ref">'+esc(d.ref)+'</div><p style="color:var(--grey);margin:14px 0 0;font-size:14.5px">We’ll confirm your pickup by '+(d.pay=='Credit / Debit card'?'email — payment received (demo).':'phone shortly.')+'</p><button class="btn pri" style="margin-top:18px" onclick="resetBook()">Book another ride</button></div>';
+    html='<div class="confirm"><div class="chk"><svg width="34" height="34" viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="#2f7d5b" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></div><h3 style="font-size:22px">Ride requested!</h3><p style="color:var(--grey);margin:8px 0">Your confirmation reference is</p><div class="ref">'+esc(d.ref)+'</div><p style="color:var(--grey);margin:14px 0 0;font-size:14.5px">We’ll confirm your pickup by '+(d.pay=='Credit / Debit card'?'email — payment received (demo).':'phone shortly.')+'</p><button class="btn pri" style="margin-top:18px" onclick="resetBook()">Book another ride</button></div>';
   }
   document.getElementById('bookForm').innerHTML=html;
 }
