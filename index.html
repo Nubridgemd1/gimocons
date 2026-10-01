@@ -441,35 +441,29 @@ function row(k,v){return '<div style="display:flex;justify-content:space-between
 function fare(){var m=parseFloat(bk.data.miles)||0,extra=bk.data.mobility=='Wheelchair'?(+pricing.wheelchair||0):bk.data.mobility=='Stretcher'?(+pricing.stretcher||0):0,t=(bk.data.trip=='One way')?1:2;return Math.round(m*(+pricing.perMile||0)*t+extra);}
 function fareText(){return bk.data.miles?('$'+fare()+'.00'):'Add distance for estimate';}
 function liveCalc(){var mi=document.getElementById('f_miles');if(!mi)return;var m=parseFloat(mi.value)||0;var ts=document.getElementById('f_trip');var t=(ts&&ts.value=='One way')?1:2;var el=document.getElementById('liveFare');if(!el)return;el.innerHTML=m?('$'+Math.round(m*(+pricing.perMile||0)*t)+'.00 <span style="font-weight:400;font-size:12px;color:var(--grey-l)">· + $'+(+pricing.wheelchair||0)+' if wheelchair</span>'):'Add distance for estimate';}
-var GEO_BIAS='&lat=29.58&lon=-95.5'; /* bias to Houston / Missouri City TX */
-function geocode(q){var u='https://photon.komoot.io/api/?limit=1&lang=en'+GEO_BIAS+'&q='+encodeURIComponent(q);return fetch(u).then(function(r){return r.json();}).then(function(j){var f=j&&j.features&&j.features[0];if(!f||!f.geometry)return null;var c=f.geometry.coordinates;return {lon:c[0],lat:c[1]};}).catch(function(){return null;});}
-function fmtAddr(p){var l1=(p.housenumber&&p.street)?(p.housenumber+' '+p.street):(p.street||p.name||'');var l2=[p.city||p.county,p.state,p.postcode].filter(Boolean).join(', ');return {l1:l1||l2,l2:l1?l2:''};}
+var GKEY='AIzaSyAzVOhOslw4RZFDEqRowKDOMfFbwzuZB_U'; /* Google Maps browser key — protect with HTTP-referrer restriction + budget cap */
+var GBIAS={circle:{center:{latitude:29.76,longitude:-95.37},radius:80000}}; /* Houston metro bias */
 var _sugT={};
-function suggest(which){var inp=document.getElementById('f_'+which),box=document.getElementById('sug_'+which);if(!inp||!box)return;bk.data[which+'Coord']=null;var q=inp.value.trim();if(q.length<3){box.classList.remove('show');box.innerHTML='';return;}clearTimeout(_sugT[which]);_sugT[which]=setTimeout(function(){fetch('https://photon.komoot.io/api/?limit=6&lang=en'+GEO_BIAS+'&q='+encodeURIComponent(q)).then(function(r){return r.json();}).then(function(j){var feats=(j&&j.features)||[],seen={},rows=[];feats.forEach(function(f){if(!f.geometry)return;var a=fmtAddr(f.properties);var label=(a.l1+(a.l2?', '+a.l2:'')).trim();if(!label||seen[label])return;seen[label]=1;var c=f.geometry.coordinates;rows.push('<div class="sugitem" onmousedown="pickSug(\''+which+'\','+c[0]+','+c[1]+',&quot;'+label.replace(/"/g,'').replace(/\\/g,'')+'&quot;)"><b>'+esc(a.l1)+'</b>'+(a.l2?'<small>'+esc(a.l2)+'</small>':'')+'</div>');});if(!rows.length){box.classList.remove('show');box.innerHTML='';return;}box.innerHTML=rows.join('');box.classList.add('show');}).catch(function(){box.classList.remove('show');});},300);}
-function pickSug(which,lon,lat,label){var inp=document.getElementById('f_'+which),box=document.getElementById('sug_'+which);if(inp)inp.value=label;bk.data[which]=label;bk.data[which+'Coord']={lon:lon,lat:lat};if(box){box.classList.remove('show');box.innerHTML='';}if(bk.data.fromCoord&&bk.data.toCoord)autoDistance();}
+/* Address autocomplete via Google Places API (New). Degrades silently if that API isn't enabled yet. */
+function suggest(which){var inp=document.getElementById('f_'+which),box=document.getElementById('sug_'+which);if(!inp||!box)return;bk.data[which+'Place']=null;var q=inp.value.trim();if(q.length<4){box.classList.remove('show');box.innerHTML='';return;}clearTimeout(_sugT[which]);_sugT[which]=setTimeout(function(){fetch('https://places.googleapis.com/v1/places:autocomplete',{method:'POST',headers:{'Content-Type':'application/json','X-Goog-Api-Key':GKEY,'X-Goog-FieldMask':'suggestions.placePrediction.text,suggestions.placePrediction.placeId'},body:JSON.stringify({input:q,includedRegionCodes:['us'],locationBias:GBIAS})}).then(function(r){return r.json();}).then(function(j){if(!j||j.error||!j.suggestions){box.classList.remove('show');box.innerHTML='';return;}var rows=j.suggestions.map(function(s){var p=s.placePrediction;if(!p||!p.text)return'';var label=p.text.text||'';return '<div class="sugitem" onmousedown="pickSug(\''+which+'\',\''+p.placeId+'\',&quot;'+label.replace(/"/g,'').replace(/\\/g,'')+'&quot;)">'+esc(label)+'</div>';}).filter(Boolean);if(!rows.length){box.classList.remove('show');box.innerHTML='';return;}box.innerHTML=rows.join('');box.classList.add('show');}).catch(function(){box.classList.remove('show');});},280);}
+function pickSug(which,placeId,label){var inp=document.getElementById('f_'+which),box=document.getElementById('sug_'+which);if(inp)inp.value=label;bk.data[which]=label;bk.data[which+'Place']=placeId;if(box){box.classList.remove('show');box.innerHTML='';}if((bk.data.fromPlace||document.getElementById('f_from').value.trim())&&(bk.data.toPlace||document.getElementById('f_to').value.trim()))autoDistance();}
 function hideSug(which){var box=document.getElementById('sug_'+which);if(box)box.classList.remove('show');}
+/* Road distance via Google Routes API — accepts address strings or place IDs, reliable residential coverage. */
+function routeMiles(o,d){return fetch('https://routes.googleapis.com/directions/v2:computeRoutes',{method:'POST',headers:{'Content-Type':'application/json','X-Goog-Api-Key':GKEY,'X-Goog-FieldMask':'routes.distanceMeters'},body:JSON.stringify({origin:o,destination:d,travelMode:'DRIVE',units:'IMPERIAL'})}).then(function(r){return r.json();}).then(function(j){if(j&&j.routes&&j.routes[0]&&j.routes[0].distanceMeters!=null)return j.routes[0].distanceMeters/1609.344;return null;}).catch(function(){return null;});}
 var _distBusy=false;
 function autoDistance(){
   var from=document.getElementById('f_from'),to=document.getElementById('f_to'),st=document.getElementById('distStatus'),mi=document.getElementById('f_miles');
-  if(!from||!to||!mi)return;
-  var haveA=bk.data.fromCoord||from.value.trim(),haveB=bk.data.toCoord||to.value.trim();
-  if(!haveA||!haveB)return;
+  if(!from||!to||!mi||!from.value.trim()||!to.value.trim())return;
   if(_distBusy)return;_distBusy=true;
   if(st){st.style.color='var(--grey)';st.textContent='📍 Calculating road distance…';}
-  var pa=bk.data.fromCoord?Promise.resolve(bk.data.fromCoord):geocode(from.value);
-  var pb=bk.data.toCoord?Promise.resolve(bk.data.toCoord):geocode(to.value);
-  Promise.all([pa,pb]).then(function(res){
-    var a=res[0],b=res[1];
-    if(!a||!b){_distBusy=false;if(st){st.style.color='#b5632b';st.innerHTML='Couldn’t auto-locate '+((!a&&!b)?'the addresses':(!a?'the pickup':'the drop-off'))+' — pick a suggestion as you type, or just enter the miles below (we’ll confirm the exact fare by phone).';}return;}
-    return fetch('https://router.project-osrm.org/route/v1/driving/'+a.lon+','+a.lat+';'+b.lon+','+b.lat+'?overview=false').then(function(r){return r.json();}).then(function(j){
-      if(j&&j.routes&&j.routes[0]){
-        var miles=Math.max(1,Math.round((j.routes[0].distance/1609.344)*10)/10);
-        mi.value=miles;bk.data.miles=miles;liveCalc();
-        if(st){st.style.color='var(--lime-d)';st.innerHTML='✓ ≈ <b>'+miles+' mi</b> by road — auto-calculated (you can edit).';}
-      } else if(st){st.style.color='#b5632b';st.textContent='Couldn’t calculate a route — please enter the miles below.';}
-      _distBusy=false;
-    });
-  }).catch(function(){if(st){st.style.color='#b5632b';st.textContent='Distance lookup unavailable — please enter the miles below.';}_distBusy=false;});
+  var o=bk.data.fromPlace?{placeId:bk.data.fromPlace}:{address:from.value};
+  var d=bk.data.toPlace?{placeId:bk.data.toPlace}:{address:to.value};
+  routeMiles(o,d).then(function(mm){
+    _distBusy=false;
+    if(mm==null){if(st){st.style.color='#b5632b';st.innerHTML='Couldn’t auto-locate the route — double-check the addresses, or enter the miles below (we’ll confirm the exact fare by phone).';}return;}
+    var miles=Math.max(1,Math.round(mm*10)/10);mi.value=miles;bk.data.miles=miles;liveCalc();
+    if(st){st.style.color='var(--lime-d)';st.innerHTML='✓ ≈ <b>'+miles+' mi</b> by road — auto-calculated (you can edit).';}
+  });
 }
 function pick(){var mm=document.querySelector('input[name=mob]:checked'),pp=document.querySelector('input[name=pay]:checked');if(mm)bk.data.mobility=mm.value;if(pp)bk.data.pay=pp.value;renderBook();}
 function grab(ids){ids.forEach(function(id){var el=document.getElementById('f_'+id);if(el)bk.data[id]=el.value;});}
