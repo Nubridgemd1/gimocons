@@ -130,6 +130,12 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--sky)} te
 .opt{border:1.5px solid var(--line);border-radius:12px;padding:12px 14px;cursor:pointer;display:flex;gap:10px;align-items:center;font-weight:600;font-family:var(--hd);font-size:14px} .opt:hover{border-color:var(--sky)}
 .opt.sel{border-color:var(--sky);background:var(--sky-soft);color:var(--sky-dd)} .opt input{width:auto}
 .fare{display:flex;justify-content:space-between;align-items:center;background:var(--lime-soft);border:1px solid var(--lime);border-radius:12px;padding:12px 16px;margin-top:14px;font-family:var(--hd)} .fare b{font-size:22px}
+.sugbox{position:absolute;left:0;right:0;top:100%;z-index:50;background:var(--card);border:1px solid var(--line);border-top:0;border-radius:0 0 10px 10px;box-shadow:var(--shadow-lg);max-height:220px;overflow:auto;display:none}
+.sugbox.show{display:block}
+.sugitem{padding:9px 12px;font-size:13px;line-height:1.3;cursor:pointer;border-bottom:1px solid var(--soft);color:var(--ink)}
+.sugitem:last-child{border-bottom:0}
+.sugitem:hover{background:var(--soft)}
+.sugitem small{display:block;color:var(--grey);font-size:11px}
 .formfoot{display:flex;justify-content:space-between;gap:10px;margin-top:18px;flex-wrap:wrap}
 .stepsb .s{line-height:1.15}
 .fare{flex-wrap:wrap;gap:6px}
@@ -418,7 +424,7 @@ function renderBook(){var d=bk.data;
   var bar='<div class="stepsb"><div class="s '+(bk.step==1?'on':bk.step>1?'done':'')+'"><span class="n">1</span>Trip</div><div class="s '+(bk.step==2?'on':bk.step>2?'done':'')+'"><span class="n">2</span>Mobility &amp; pay</div><div class="s '+(bk.step==3?'on':'')+'"><span class="n">3</span>Confirm</div></div>';
   var html=bar;
   if(bk.step==1){
-    html+='<div class="fgrid"><div class="field"><label>Full name *</label><input id="f_name" value="'+esc(d.name||'')+'"></div><div class="field"><label>Phone *</label><input id="f_phone" value="'+esc(d.phone||'')+'"></div><div class="field full"><label>Email</label><input id="f_email" type="email" value="'+esc(d.email||'')+'"></div><div class="field full"><label>Pickup address *</label><input id="f_from" value="'+esc(d.from||'')+'" onblur="autoDistance()"></div><div class="field full"><label>Drop-off address *</label><input id="f_to" value="'+esc(d.to||'')+'" onblur="autoDistance()"></div><div class="field"><label>Date *</label><input id="f_date" type="date" value="'+esc(d.date||'')+'"></div><div class="field"><label>Pickup time *</label><input id="f_time" type="time" value="'+esc(d.time||'')+'"></div><div class="field"><label>Trip type</label><select id="f_trip" onchange="liveCalc()"><option'+(d.trip=='Round trip'?' selected':'')+'>Round trip</option><option'+(d.trip=='One way'?' selected':'')+'>One way</option></select></div><div class="field"><label>Distance (miles) · auto</label><input id="f_miles" type="number" min="1" step="0.1" value="'+esc(d.miles||'')+'" oninput="liveCalc()"></div></div><div id="distStatus" style="font-size:12.5px;color:var(--grey);margin:-2px 0 10px">Enter pickup &amp; drop-off — the road distance fills in automatically. You can still edit it.</div><div class="fare"><span>Estimated fare</span><b id="liveFare">—</b></div><div class="formfoot"><span></span><button class="btn pri" onclick="next1()">Continue →</button></div>';
+    html+='<div class="fgrid"><div class="field"><label>Full name *</label><input id="f_name" value="'+esc(d.name||'')+'"></div><div class="field"><label>Phone *</label><input id="f_phone" value="'+esc(d.phone||'')+'"></div><div class="field full"><label>Email</label><input id="f_email" type="email" value="'+esc(d.email||'')+'"></div><div class="field full" style="position:relative"><label>Pickup address *</label><input id="f_from" autocomplete="off" value="'+esc(d.from||'')+'" oninput="suggest(\'from\')" onblur="setTimeout(function(){hideSug(\'from\');autoDistance();},200)"><div id="sug_from" class="sugbox"></div></div><div class="field full" style="position:relative"><label>Drop-off address *</label><input id="f_to" autocomplete="off" value="'+esc(d.to||'')+'" oninput="suggest(\'to\')" onblur="setTimeout(function(){hideSug(\'to\');autoDistance();},200)"><div id="sug_to" class="sugbox"></div></div><div class="field"><label>Date *</label><input id="f_date" type="date" value="'+esc(d.date||'')+'"></div><div class="field"><label>Pickup time *</label><input id="f_time" type="time" value="'+esc(d.time||'')+'"></div><div class="field"><label>Trip type</label><select id="f_trip" onchange="liveCalc()"><option'+(d.trip=='Round trip'?' selected':'')+'>Round trip</option><option'+(d.trip=='One way'?' selected':'')+'>One way</option></select></div><div class="field"><label>Distance (miles) · auto</label><input id="f_miles" type="number" min="1" step="0.1" value="'+esc(d.miles||'')+'" oninput="liveCalc()"></div></div><div id="distStatus" style="font-size:12.5px;color:var(--grey);margin:-2px 0 10px">Enter pickup &amp; drop-off — the road distance fills in automatically. You can still edit it.</div><div class="fare"><span>Estimated fare</span><b id="liveFare">—</b></div><div class="formfoot"><span></span><button class="btn pri" onclick="next1()">Continue →</button></div>';
   } else if(bk.step==2){
     var mob=['Ambulatory','Wheelchair','Stretcher'],pay=['Credit / Debit card','Insurance / Medicaid','Cash on ride','Invoice facility'];
     html+='<label style="display:block;margin-bottom:8px">Mobility need</label><div class="opts">'+mob.map(function(m){return '<label class="opt'+(d.mobility==m?' sel':'')+'"><input type="radio" name="mob" value="'+m+'" '+(d.mobility==m?'checked':'')+' onchange="pick()">'+m+'</label>'}).join('')+'</div><label style="display:block;margin:16px 0 8px">Payment method</label><div class="opts">'+pay.map(function(p){return '<label class="opt'+(d.pay==p?' sel':'')+'"><input type="radio" name="pay" value="'+p+'" '+(d.pay==p?'checked':'')+' onchange="pick()">'+p+'</label>'}).join('')+'</div>'+
@@ -435,25 +441,35 @@ function row(k,v){return '<div style="display:flex;justify-content:space-between
 function fare(){var m=parseFloat(bk.data.miles)||0,extra=bk.data.mobility=='Wheelchair'?(+pricing.wheelchair||0):bk.data.mobility=='Stretcher'?(+pricing.stretcher||0):0,t=(bk.data.trip=='One way')?1:2;return Math.round(m*(+pricing.perMile||0)*t+extra);}
 function fareText(){return bk.data.miles?('$'+fare()+'.00'):'Add distance for estimate';}
 function liveCalc(){var mi=document.getElementById('f_miles');if(!mi)return;var m=parseFloat(mi.value)||0;var ts=document.getElementById('f_trip');var t=(ts&&ts.value=='One way')?1:2;var el=document.getElementById('liveFare');if(!el)return;el.innerHTML=m?('$'+Math.round(m*(+pricing.perMile||0)*t)+'.00 <span style="font-weight:400;font-size:12px;color:var(--grey-l)">· + $'+(+pricing.wheelchair||0)+' if wheelchair</span>'):'Add distance for estimate';}
-function geocode(q){var u='https://photon.komoot.io/api/?limit=1&lang=en&q='+encodeURIComponent(q);return fetch(u).then(function(r){return r.json();}).then(function(j){var f=j&&j.features&&j.features[0];if(!f||!f.geometry)return null;var c=f.geometry.coordinates;return {lon:c[0],lat:c[1]};}).catch(function(){return null;});}
+var GEO_BIAS='&lat=29.58&lon=-95.5'; /* bias to Houston / Missouri City TX */
+function geocode(q){var u='https://photon.komoot.io/api/?limit=1&lang=en'+GEO_BIAS+'&q='+encodeURIComponent(q);return fetch(u).then(function(r){return r.json();}).then(function(j){var f=j&&j.features&&j.features[0];if(!f||!f.geometry)return null;var c=f.geometry.coordinates;return {lon:c[0],lat:c[1]};}).catch(function(){return null;});}
+function fmtAddr(p){var l1=(p.housenumber&&p.street)?(p.housenumber+' '+p.street):(p.street||p.name||'');var l2=[p.city||p.county,p.state,p.postcode].filter(Boolean).join(', ');return {l1:l1||l2,l2:l1?l2:''};}
+var _sugT={};
+function suggest(which){var inp=document.getElementById('f_'+which),box=document.getElementById('sug_'+which);if(!inp||!box)return;bk.data[which+'Coord']=null;var q=inp.value.trim();if(q.length<3){box.classList.remove('show');box.innerHTML='';return;}clearTimeout(_sugT[which]);_sugT[which]=setTimeout(function(){fetch('https://photon.komoot.io/api/?limit=6&lang=en'+GEO_BIAS+'&q='+encodeURIComponent(q)).then(function(r){return r.json();}).then(function(j){var feats=(j&&j.features)||[],seen={},rows=[];feats.forEach(function(f){if(!f.geometry)return;var a=fmtAddr(f.properties);var label=(a.l1+(a.l2?', '+a.l2:'')).trim();if(!label||seen[label])return;seen[label]=1;var c=f.geometry.coordinates;rows.push('<div class="sugitem" onmousedown="pickSug(\''+which+'\','+c[0]+','+c[1]+',&quot;'+label.replace(/"/g,'').replace(/\\/g,'')+'&quot;)"><b>'+esc(a.l1)+'</b>'+(a.l2?'<small>'+esc(a.l2)+'</small>':'')+'</div>');});if(!rows.length){box.classList.remove('show');box.innerHTML='';return;}box.innerHTML=rows.join('');box.classList.add('show');}).catch(function(){box.classList.remove('show');});},300);}
+function pickSug(which,lon,lat,label){var inp=document.getElementById('f_'+which),box=document.getElementById('sug_'+which);if(inp)inp.value=label;bk.data[which]=label;bk.data[which+'Coord']={lon:lon,lat:lat};if(box){box.classList.remove('show');box.innerHTML='';}if(bk.data.fromCoord&&bk.data.toCoord)autoDistance();}
+function hideSug(which){var box=document.getElementById('sug_'+which);if(box)box.classList.remove('show');}
 var _distBusy=false;
 function autoDistance(){
   var from=document.getElementById('f_from'),to=document.getElementById('f_to'),st=document.getElementById('distStatus'),mi=document.getElementById('f_miles');
-  if(!from||!to||!mi||!from.value.trim()||!to.value.trim())return;
+  if(!from||!to||!mi)return;
+  var haveA=bk.data.fromCoord||from.value.trim(),haveB=bk.data.toCoord||to.value.trim();
+  if(!haveA||!haveB)return;
   if(_distBusy)return;_distBusy=true;
   if(st){st.style.color='var(--grey)';st.textContent='📍 Calculating road distance…';}
-  Promise.all([geocode(from.value),geocode(to.value)]).then(function(res){
+  var pa=bk.data.fromCoord?Promise.resolve(bk.data.fromCoord):geocode(from.value);
+  var pb=bk.data.toCoord?Promise.resolve(bk.data.toCoord):geocode(to.value);
+  Promise.all([pa,pb]).then(function(res){
     var a=res[0],b=res[1];
-    if(!a||!b){if(st){st.style.color='#b5632b';st.textContent='Couldn’t locate one of the addresses — please enter miles manually.';}_distBusy=false;return;}
+    if(!a||!b){_distBusy=false;if(st){st.style.color='#b5632b';st.innerHTML='Couldn’t auto-locate '+((!a&&!b)?'the addresses':(!a?'the pickup':'the drop-off'))+' — pick a suggestion as you type, or just enter the miles below (we’ll confirm the exact fare by phone).';}return;}
     return fetch('https://router.project-osrm.org/route/v1/driving/'+a.lon+','+a.lat+';'+b.lon+','+b.lat+'?overview=false').then(function(r){return r.json();}).then(function(j){
       if(j&&j.routes&&j.routes[0]){
         var miles=Math.max(1,Math.round((j.routes[0].distance/1609.344)*10)/10);
         mi.value=miles;bk.data.miles=miles;liveCalc();
         if(st){st.style.color='var(--lime-d)';st.innerHTML='✓ ≈ <b>'+miles+' mi</b> by road — auto-calculated (you can edit).';}
-      } else if(st){st.style.color='#b5632b';st.textContent='Couldn’t calculate a route — please enter miles manually.';}
+      } else if(st){st.style.color='#b5632b';st.textContent='Couldn’t calculate a route — please enter the miles below.';}
       _distBusy=false;
     });
-  }).catch(function(){if(st){st.style.color='#b5632b';st.textContent='Distance lookup unavailable — please enter miles manually.';}_distBusy=false;});
+  }).catch(function(){if(st){st.style.color='#b5632b';st.textContent='Distance lookup unavailable — please enter the miles below.';}_distBusy=false;});
 }
 function pick(){var mm=document.querySelector('input[name=mob]:checked'),pp=document.querySelector('input[name=pay]:checked');if(mm)bk.data.mobility=mm.value;if(pp)bk.data.pay=pp.value;renderBook();}
 function grab(ids){ids.forEach(function(id){var el=document.getElementById('f_'+id);if(el)bk.data[id]=el.value;});}
