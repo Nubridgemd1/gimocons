@@ -324,7 +324,7 @@ var LS={get:function(k,d){try{var v=localStorage.getItem(k);return v?JSON.parse(
 function IMG(id,w){return 'https://images.pexels.com/photos/'+id+'/pexels-photo-'+id+'.jpeg?auto=compress&cs=tinysrgb&w='+(w||1000);}
 var PIX={hero:7551683,g:[7446757,7446775,8088868,8088603,18459193,18459210,7551622,6647024],reel:[7551622,6647024,7345443,7544907,36706839,8088861],blog:[7551683,8088603,7345443,18459193,7446757,8088868,7544907,7551622,18459210,6647024],flyer:[7446775,18459193,7345443,8088868,7551683,6647024,7544907,7446757,8088603,36706839]};
 
-var DEFAULT_CONTACT={phone:"(612) 483-1250",phone2:"(281) 935-9597",email:"info@gimocons.com",
+var DEFAULT_CONTACT={phone:"(612) 483-1250",phone2:"(281) 935-9597",email:"onome.hunt@gimocons.com",
   address:"8707 Timber Knoll Drive, Missouri City, TX 77459",hours:"Mon–Sun · 5:00 AM – 11:00 PM · 24/7 scheduling line",
   area:"Greater Houston & surrounding counties (up to 60 mi)",
   heroTag:"Non-emergency medical transport for seniors, wheelchair users, dialysis and discharge patients — door-to-door, with trained, compassionate drivers.",};
@@ -342,7 +342,7 @@ function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return
    FormSubmit endpoint; the rest are CC'd). NOTE: FormSubmit must be ACTIVATED once per primary
    inbox — the first submission triggers an "Activate Form" email to gimocons@gmail.com that the
    owner must click, after which every booking/message is delivered. */
-var NOTIFY_EMAIL=["gimocons@gmail.com","noms_h@hotmail.com"]; /* booking + message inboxes */
+var NOTIFY_EMAIL=["gimocons@gmail.com","noms_h@hotmail.com","onome.hunt@gimocons.com"]; /* booking + message inboxes */
 var NOTIFY_SMS=["6124831250@tmomail.net","2819359597@txt.att.net"]; /* text alerts: 612 via T-Mobile, 281 via AT&T gateway — change the @gateway if the carrier differs */
 function notify(kind,d){
   try{
