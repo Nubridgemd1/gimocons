@@ -126,6 +126,8 @@ header.nav{position:sticky;top:0;z-index:50;background:color-mix(in srgb,var(--b
 label{font-size:12.5px;font-weight:600;font-family:var(--hd);color:var(--grey)}
 input,select,textarea{font-family:var(--bd);font-size:15px;padding:11px 12px;border:1.5px solid var(--line);border-radius:11px;background:var(--bg);color:var(--ink);width:100%;max-width:100%}
 input:focus,select:focus,textarea:focus{outline:none;border-color:var(--sky)} textarea{resize:vertical;min-height:70px}
+input.inerr,select.inerr,textarea.inerr{border-color:#d9534f!important;background:#fff6f6;box-shadow:0 0 0 3px rgba(217,83,79,.14)}
+.field.inerr label{color:#d9534f}
 .opts{display:grid;grid-template-columns:repeat(2,1fr);gap:10px} @media(max-width:620px){.opts{grid-template-columns:1fr}}
 .opt{border:1.5px solid var(--line);border-radius:12px;padding:12px 14px;cursor:pointer;display:flex;gap:10px;align-items:center;font-weight:600;font-family:var(--hd);font-size:14px} .opt:hover{border-color:var(--sky)}
 .opt.sel{border-color:var(--sky);background:var(--sky-soft);color:var(--sky-dd)} .opt input{width:auto}
@@ -399,6 +401,8 @@ function render(){
   document.getElementById('testi').innerHTML=testimonials.map(function(t){return '<div class="tcard"><div class="stars">★★★★★</div><p>“'+esc(t.q)+'”</p><div class="who"><div class="av">'+esc(t.n[0])+'</div><div><b style="font-family:var(--hd)">'+esc(t.n)+'</b><div style="font-size:12.5px;color:var(--grey-l)">'+esc(t.r)+'</div></div></div></div>'}).join('');
   document.getElementById('blogGrid').innerHTML=blog.map(function(b,i){return '<article class="bcard" onclick="openPost('+i+')"><div class="thumb"><img loading="lazy" src="'+pimg('b'+i,PIX.blog[i],600)+'" alt="'+esc(b.t)+'"></div><div class="bd"><span class="cat">'+esc(b.c)+'</span><h3>'+esc(b.t)+'</h3><p>'+esc(b.x)+'</p><div class="meta"><span>🕐 '+esc(b.rt)+' read</span><span>💬 '+((comments[i]||[]).length)+'</span></div></div></article>'}).join('');
   renderContact(); renderBook(); document.getElementById('yr').textContent=new Date().getFullYear();
+  var bf=document.getElementById('bookForm');
+  if(bf&&!bf._errBound){bf._errBound=true;bf.addEventListener('input',function(e){var t=e.target;if(t&&t.classList){t.classList.remove('inerr');if(t.parentNode&&t.parentNode.classList)t.parentNode.classList.remove('inerr');}});}
 }
 function flyerInner(f,i){return '<div class="fimg"><img loading="lazy" src="'+pimg('f'+i,PIX.flyer[i],600)+'" alt=""></div><div class="fov" style="background:linear-gradient(180deg,rgba(15,45,63,.28),'+f.c+'ee)"><span class="fnum">'+(i+1)+'/10</span><div style="margin-top:auto"><h4>'+esc(f.t)+'</h4><div class="fsub">'+esc(f.s)+'</div><span class="fcta">Book a Ride →</span></div></div>';}
 function renderContact(){
@@ -472,7 +476,16 @@ function autoDistance(){
 }
 function pick(){var mm=document.querySelector('input[name=mob]:checked'),pp=document.querySelector('input[name=pay]:checked');if(mm)bk.data.mobility=mm.value;if(pp)bk.data.pay=pp.value;renderBook();}
 function grab(ids){ids.forEach(function(id){var el=document.getElementById('f_'+id);if(el)bk.data[id]=el.value;});}
-function next1(){grab(['name','phone','email','from','to','date','time','miles']);bk.data.trip=document.getElementById('f_trip').value;if(!bk.data.name||!bk.data.phone||!bk.data.from||!bk.data.to||!bk.data.date||!bk.data.time){toast('Please complete the required fields');return;}bk.step=2;renderBook();}
+function clearBookErrs(){['name','phone','email','from','to','date','time','miles'].forEach(function(id){var el=document.getElementById('f_'+id);if(el){el.classList.remove('inerr');if(el.parentNode&&el.parentNode.classList)el.parentNode.classList.remove('inerr');}});}
+function next1(){
+  grab(['name','phone','email','from','to','date','time','miles']);
+  var trip=document.getElementById('f_trip');if(trip)bk.data.trip=trip.value;
+  clearBookErrs();
+  var req=['name','phone','from','to','date','time'],miss=[];
+  req.forEach(function(id){ if(!bk.data[id]||!String(bk.data[id]).trim()){ var el=document.getElementById('f_'+id); if(el){el.classList.add('inerr'); if(el.parentNode&&el.parentNode.classList)el.parentNode.classList.add('inerr');} miss.push(id); } });
+  if(miss.length){ var f=document.getElementById('f_'+miss[0]); if(f){ f.scrollIntoView({behavior:'smooth',block:'center'}); try{f.focus({preventScroll:true});}catch(e){f.focus();} } toast('Please fill the highlighted required field'+(miss.length>1?'s':'')); return; }
+  bk.step=2;renderBook();
+}
 function next2(){var n=document.getElementById('f_notes');if(n)bk.data.notes=n.value;var cn=document.getElementById('c_num');if(cn){bk.data.cnum=cn.value;bk.data.cexp=document.getElementById('c_exp').value;bk.data.ccvc=document.getElementById('c_cvc').value;}if(!bk.data.mobility){toast('Choose a mobility option');return;}if(!bk.data.pay){toast('Choose a payment method');return;}if(bk.data.pay=='Credit / Debit card'&&(!bk.data.cnum||!bk.data.cexp||!bk.data.ccvc)){toast('Enter card details (demo)');return;}bk.step=3;renderBook();}
 function submitBook(){var d=bk.data;d.ref='GC-'+Math.random().toString(36).slice(2,7).toUpperCase();d.created=new Date().toISOString();d.fare=fare();d.paid=(d.pay=='Credit / Debit card');var save=Object.assign({},d);delete save.cnum;delete save.cexp;delete save.ccvc;bookings.unshift(save);LS.set('gimo_bookings',bookings);notify('ride',save);renderBook();toast('Ride request submitted');}
 function resetBook(){bk={step:1,data:{}};renderBook();}
