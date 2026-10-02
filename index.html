@@ -338,15 +338,20 @@ var photoOverrides=LS.get("gimo_photos",{});
 function pimg(slot,id,w){ return photoOverrides[slot] ? photoOverrides[slot] : IMG(id,w); }
 function toast(m){var t=document.getElementById('toast');t.textContent=m;t.classList.add('show');clearTimeout(t._);t._=setTimeout(function(){t.classList.remove('show')},2600);}
 function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
-/* Real-time delivery of bookings & messages via email (FormSubmit). SMS targets can be added once a gateway/carrier is set. */
-var NOTIFY_SMS=["6124831250@tmomail.net","2819359597@txt.att.net"]; /* owner alerts: 612 T-Mobile, 281 AT&T */
+/* Real-time delivery of bookings & messages. Goes to the owner inboxes (first address is the
+   FormSubmit endpoint; the rest are CC'd). NOTE: FormSubmit must be ACTIVATED once per primary
+   inbox — the first submission triggers an "Activate Form" email to gimocons@gmail.com that the
+   owner must click, after which every booking/message is delivered. */
+var NOTIFY_EMAIL=["gimocons@gmail.com","noms_h@hotmail.com"]; /* booking + message inboxes */
+var NOTIFY_SMS=["6124831250@tmomail.net","2819359597@txt.att.net"]; /* text alerts: 612 via T-Mobile, 281 via AT&T gateway — change the @gateway if the carrier differs */
 function notify(kind,d){
   try{
     var subject=(kind==='ride'?('New ride request '+(d.ref||'')):'New website message')+' — GIMO Consulting Services';
     var body={_subject:subject,_template:'table',Type:(kind==='ride'?'Ride request':'Message')};
     Object.keys(d).forEach(function(k){ if(['sig','cnum','cexp','ccvc','paid'].indexOf(k)>=0)return; if(d[k]!=null&&d[k]!=='') body[k]=d[k]; });
-    if(NOTIFY_SMS.length) body._cc=NOTIFY_SMS.join(',');
-    fetch('https://formsubmit.co/ajax/'+encodeURIComponent(contact.email),{method:'POST',headers:{'Content-Type':'application/json',Accept:'application/json'},body:JSON.stringify(body)}).catch(function(){});
+    var cc=NOTIFY_EMAIL.slice(1).concat(NOTIFY_SMS);
+    if(cc.length) body._cc=cc.join(',');
+    fetch('https://formsubmit.co/ajax/'+encodeURIComponent(NOTIFY_EMAIL[0]),{method:'POST',headers:{'Content-Type':'application/json',Accept:'application/json'},body:JSON.stringify(body)}).catch(function(){});
   }catch(e){}
 }
 
