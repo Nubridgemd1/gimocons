@@ -345,7 +345,15 @@ function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return
    inbox — the first submission triggers an "Activate Form" email to gimocons@gmail.com that the
    owner must click, after which every booking/message is delivered. */
 var NOTIFY_EMAIL=["gimocons@gmail.com","noms_h@hotmail.com","onome.hunt@gimocons.com"]; /* booking + message inboxes */
-var NOTIFY_SMS=["6124831250@tmomail.net","2819359597@txt.att.net"]; /* text alerts: 612 via T-Mobile, 281 via AT&T gateway — change the @gateway if the carrier differs */
+/* Free email->SMS, shotgunned across the carrier gateways that still operate (T-Mobile tmomail.net,
+   Verizon vtext.com, Metro mymetropcs.com). A phone number is active on only one carrier, so only
+   that carrier's gateway delivers and the others simply bounce — no misdelivery. NOTE: AT&T shut
+   down its email-to-text gateway in 2025, so an AT&T number can't be reached this way (needs a paid
+   SMS route). Add the exact carrier gateway here if you know it. */
+var NOTIFY_SMS=[
+  "6124831250@tmomail.net","6124831250@vtext.com","6124831250@mymetropcs.com",
+  "2819359597@tmomail.net","2819359597@vtext.com","2819359597@mymetropcs.com"
+];
 function notify(kind,d){
   try{
     var subject=(kind==='ride'?('New ride request '+(d.ref||'')):'New website message')+' — GIMO Consulting Services';
