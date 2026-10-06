@@ -354,20 +354,36 @@ function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return
    inbox — the first submission triggers an "Activate Form" email to gimocons@gmail.com that the
    owner must click, after which every booking/message is delivered. */
 var NOTIFY_EMAIL=["gimocons@gmail.com","noms_h@hotmail.com","onome.hunt@gimocons.com"]; /* booking + message inboxes */
-/* Free email->SMS, shotgunned across the carrier gateways that still operate (T-Mobile tmomail.net,
-   Verizon vtext.com, Metro mymetropcs.com). A phone number is active on only one carrier, so only
-   that carrier's gateway delivers and the others simply bounce — no misdelivery. NOTE: AT&T shut
-   down its email-to-text gateway in 2025, so an AT&T number can't be reached this way (needs a paid
-   SMS route). Add the exact carrier gateway here if you know it. */
+/* Free email->SMS for the T-Mobile / Metro numbers. T-Mobile uses tmomail.net and Metro-by-T-Mobile
+   uses mymetropcs.com; both numbers are copied on each, and the gateway that owns the number delivers
+   while the other bounces harmlessly. Verizon's vtext.com gateway and AT&T's gateway have both been
+   discontinued, so they are NOT used here. IMPORTANT for deliverability: T-Mobile's gateway strips
+   HTML and drops table/MMS-heavy mail, so the alert below is sent as SHORT PLAIN TEXT (no _template),
+   which is what actually arrives as a text. If a number ever changes carrier, update the gateway. */
 var NOTIFY_SMS=[
-  "6124831250@tmomail.net","6124831250@vtext.com","6124831250@mymetropcs.com",
-  "2819359597@tmomail.net","2819359597@vtext.com","2819359597@mymetropcs.com"
+  "6124831250@tmomail.net","6124831250@mymetropcs.com",
+  "2819359597@tmomail.net","2819359597@mymetropcs.com"
 ];
 function notify(kind,d){
   try{
-    var subject=(kind==='ride'?('New ride request '+(d.ref||'')):'New website message')+' — GIMO Consulting Services';
-    var body={_subject:subject,_template:'table',Type:(kind==='ride'?'Ride request':'Message')};
-    Object.keys(d).forEach(function(k){ if(['sig','cnum','cexp','ccvc','paid'].indexOf(k)>=0)return; if(d[k]!=null&&d[k]!=='') body[k]=d[k]; });
+    var ref=d.ref||'';
+    // Short, plain, SMS-friendly summary — this is the body that reaches the T-Mobile/Metro text gateways.
+    var msg;
+    if(kind==='ride'){
+      msg='GIMO ride '+(ref?ref+' ':'')
+        +(d.name||'')+' '+(d.phone||'')
+        +' | '+(d.from||'?')+' -> '+(d.to||'?')
+        +' | '+(d.date||'')+' '+(d.time||'')+(d.trip?' '+d.trip:'')
+        +(d.mobility?' | '+d.mobility:'')
+        +(d.pay?' | '+d.pay:'')
+        +(d.fare?' | $'+d.fare:'')
+        +(d.notes?' | '+d.notes:'');
+    } else {
+      msg='GIMO message: '+(d.name||'')+' '+(d.phone||'')+(d.email?' '+d.email:'')+' — '+(d.msg||'');
+    }
+    var subject=(kind==='ride'?('GIMO ride '+ref):'GIMO website message');
+    // No _template: plain email. Carrier gateways render plain text as a real SMS; HTML tables get dropped.
+    var body={_subject:subject, Alert:msg};
     var cc=NOTIFY_EMAIL.slice(1).concat(NOTIFY_SMS);
     if(cc.length) body._cc=cc.join(',');
     fetch('https://formsubmit.co/ajax/'+encodeURIComponent(NOTIFY_EMAIL[0]),{method:'POST',headers:{'Content-Type':'application/json',Accept:'application/json'},body:JSON.stringify(body)}).catch(function(){});
