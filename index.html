@@ -122,10 +122,14 @@ header.nav{position:sticky;top:0;z-index:50;background:color-mix(in srgb,var(--b
 .stepsb .s.on{color:var(--sky-dd);background:var(--sky-soft)} .stepsb .s.on .n{background:var(--sky);color:#fff}
 .stepsb .s.done{color:var(--lime-d)} .stepsb .s.done .n{background:var(--lime);color:#ffffff}
 .fgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px} @media(max-width:620px){.fgrid{grid-template-columns:1fr}}
-.field{display:flex;flex-direction:column;gap:5px} .field.full{grid-column:1/-1}
+.field{display:flex;flex-direction:column;gap:5px;min-width:0} .field.full{grid-column:1/-1}
 label{font-size:12.5px;font-weight:600;font-family:var(--hd);color:var(--grey)}
 input,select,textarea{font-family:var(--bd);font-size:15px;padding:11px 12px;border:1.5px solid var(--line);border-radius:11px;background:var(--bg);color:var(--ink);width:100%;max-width:100%}
 input:focus,select:focus,textarea:focus{outline:none;border-color:var(--sky)} textarea{resize:vertical;min-height:70px}
+/* iOS: date/time inputs keep an intrinsic width and overflow unless appearance is reset + allowed to shrink */
+input[type=date],input[type=time]{-webkit-appearance:none;appearance:none;min-width:0;width:100%}
+input[type=date]::-webkit-date-and-time-value{text-align:left;margin:0}
+input::-webkit-date-and-time-value{min-width:0}
 input.inerr,select.inerr,textarea.inerr{border-color:#d9534f!important;background:#fff6f6;box-shadow:0 0 0 3px rgba(217,83,79,.14)}
 .field.inerr label{color:#d9534f}
 .opts{display:grid;grid-template-columns:repeat(2,1fr);gap:10px} @media(max-width:620px){.opts{grid-template-columns:1fr}}
