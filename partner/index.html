@@ -232,6 +232,7 @@ function signAgreement(){
 function showDone(facility,email){
   document.getElementById('formArea').hidden=true;
   var dc=document.getElementById('doneCard'); dc.hidden=false;
+  var tp=document.getElementById('toPortal'); if(tp)tp.href='../facility/?facility='+encodeURIComponent(facility||'')+'&email='+encodeURIComponent(email||'');
   document.getElementById('doneMsg').textContent='Thank you, '+facility+'. Your executed Facility Transportation Services Agreement has been emailed to '+email+' and to GIMO Consulting Services. Welcome aboard — you can now set up your facility portal and start requesting trips.';
   window.scrollTo({top:0,behavior:'smooth'});
 }

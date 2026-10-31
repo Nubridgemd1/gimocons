@@ -401,6 +401,7 @@ h1,h2,h3,h4{font-weight:600;letter-spacing:.2px}
 <div class="modal" id="admin"><div class="ov" onclick="closeAdmin()"></div><div class="box" id="adminBox"><button class="x" onclick="closeAdmin()">✕</button><div class="mpad" id="adminContent"></div></div></div>
 <div class="toast" id="toast"></div>
 
+<script src="gimo-api.js"></script>
 <script>
 var LS={get:function(k,d){try{var v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},set:function(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
 function IMG(id,w){return 'https://images.pexels.com/photos/'+id+'/pexels-photo-'+id+'.jpeg?auto=compress&cs=tinysrgb&w='+(w||1000);}
@@ -603,7 +604,7 @@ function openAdmin(){var ok=LS.get('gimo_admin_ok',false);
 function closeAdmin(){document.getElementById('admin').classList.remove('open');document.body.style.overflow='';}
 function adminLogin(){var u=(document.getElementById('auser').value||'').trim(),p=document.getElementById('apass').value;if(u===creds.user&&p===creds.pass){LS.set('gimo_admin_ok',true);adminHome();toast('Welcome back');}else toast('Incorrect username or password');}
 function adminLogout(){LS.set('gimo_admin_ok',false);closeAdmin();toast('Signed out');}
-function adminHome(){document.getElementById('adminContent').innerHTML='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px"><h2 style="font-size:22px">Admin console</h2><button class="btn ghost sm" onclick="adminLogout()">Sign out</button></div><div class="adtabs"><button class="on" onclick="adTab(this,0)">Contact info</button><button onclick="adTab(this,1)">Photos</button><button onclick="adTab(this,2)">Requests ('+bookings.length+')</button><button onclick="adTab(this,3)">Pricing</button><button onclick="adTab(this,4)">Homepage</button><button onclick="adTab(this,5)">MediRoutes</button><button onclick="adTab(this,6)">Proposal</button><button onclick="adTab(this,7)">Security</button></div><div class="adpane on" id="ap0">'+contactPane()+'</div><div class="adpane" id="ap1">'+photosPane()+'</div><div class="adpane" id="ap2">'+bkPane()+'</div><div class="adpane" id="ap3">'+pricePane()+'</div><div class="adpane" id="ap4">'+homePane()+'</div><div class="adpane" id="ap5">'+medirPane()+'</div><div class="adpane" id="ap6">'+proposalPane()+'</div><div class="adpane" id="ap7">'+securityPane()+'</div>';}
+function adminHome(){document.getElementById('adminContent').innerHTML='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px"><h2 style="font-size:22px">Admin console</h2><button class="btn ghost sm" onclick="adminLogout()">Sign out</button></div><div class="adtabs"><button class="on" onclick="adTab(this,0)">Contact info</button><button onclick="adTab(this,1)">Photos</button><button onclick="adTab(this,2)">Requests ('+bookings.length+')</button><button onclick="adTab(this,3)">Pricing</button><button onclick="adTab(this,4)">Homepage</button><button onclick="adTab(this,8)">Trip Queue</button><button onclick="adTab(this,5)">MediRoutes</button><button onclick="adTab(this,6)">Proposal</button><button onclick="adTab(this,7)">Security</button></div><div class="adpane on" id="ap0">'+contactPane()+'</div><div class="adpane" id="ap1">'+photosPane()+'</div><div class="adpane" id="ap2">'+bkPane()+'</div><div class="adpane" id="ap3">'+pricePane()+'</div><div class="adpane" id="ap4">'+homePane()+'</div><div class="adpane" id="ap5">'+medirPane()+'</div><div class="adpane" id="ap6">'+proposalPane()+'</div><div class="adpane" id="ap7">'+securityPane()+'</div><div class="adpane" id="ap8">'+queuePane()+'</div>';}
 function photoRow(slot,label,defId){return '<div style="display:flex;gap:10px;align-items:center;margin-bottom:8px"><img src="'+(photoOverrides[slot]||IMG(defId,120))+'" style="width:52px;height:52px;object-fit:cover;border-radius:8px;border:1px solid var(--line);flex:none"><div style="flex:1;min-width:0"><div style="font-size:11.5px;font-weight:600;font-family:var(--hd);color:var(--grey);margin-bottom:3px">'+label+'</div><input id="ph_'+slot+'" placeholder="Paste image URL" value="'+esc(photoOverrides[slot]||'')+'" style="font-size:13px;padding:8px"></div><label class="btn ghost sm" style="cursor:pointer;flex:none">Upload<input type="file" accept="image/*" style="display:none" onchange="uploadPhoto(\''+slot+'\',this)"></label>'+(photoOverrides[slot]?'<button class="btn ghost sm" title="Reset" style="flex:none" onclick="resetPhoto(\''+slot+'\')">↺</button>':'')+'</div>';}
 function photosPane(){var h='<p style="color:var(--grey);font-size:13.5px;margin:0 0 14px">Replace any photo — paste an image URL or upload from your device. Changes save on this device and update the site instantly.</p>';
   h+='<h4 style="font-size:13px;color:var(--sky-d);margin:6px 0 8px">Hero</h4>'+photoRow('hero','Homepage hero',PIX.hero);
@@ -619,7 +620,7 @@ function uploadPhoto(slot,input){var f=input.files&&input.files[0];if(!f)return;
 function resetPhoto(slot){delete photoOverrides[slot];LS.set('gimo_photos',photoOverrides);render();document.getElementById('ap1').innerHTML=photosPane();toast('Reset to default');}
 function securityPane(){return '<p style="color:var(--grey);font-size:13.5px;margin:0 0 14px">Update the admin sign-in. Stored on this device.</p><div class="fgrid"><div class="field"><label>Admin username</label><input id="sec_user" value="'+esc(creds.user)+'"></div><div class="field"></div><div class="field"><label>New password</label><input id="sec_p1" type="password" placeholder="Leave blank to keep current"></div><div class="field"><label>Confirm new password</label><input id="sec_p2" type="password" placeholder="Confirm"></div></div><button class="btn pri" style="margin-top:14px" onclick="saveCreds()">Update credentials</button>';}
 function saveCreds(){var u=(document.getElementById('sec_user').value||'').trim(),p1=document.getElementById('sec_p1').value,p2=document.getElementById('sec_p2').value;if(!u){toast('Username required');return;}if(p1||p2){if(p1!==p2){toast('Passwords do not match');return;}if(p1.length<4){toast('Password too short (min 4)');return;}creds.pass=p1;}creds.user=u;LS.set('gimo_creds',creds);document.getElementById('sec_p1').value='';document.getElementById('sec_p2').value='';toast('Credentials updated');}
-function adTab(btn,i){document.querySelectorAll('.adtabs button').forEach(function(b){b.classList.remove('on')});btn.classList.add('on');document.querySelectorAll('.adpane').forEach(function(p,j){p.classList.toggle('on',j===i)});}
+function adTab(btn,i){document.querySelectorAll('.adtabs button').forEach(function(b){b.classList.remove('on')});btn.classList.add('on');document.querySelectorAll('.adpane').forEach(function(p,j){p.classList.toggle('on',j===i)});if(i===8)loadQueue();}
 function contactPane(){return '<div class="fgrid">'+['phone|Phone (primary)','phone2|Phone (alternate)','email|Email','address|Office address','hours|Hours','area|Service area'].map(function(x){var k=x.split('|')[0],l=x.split('|')[1];return '<div class="field'+(k=='address'||k=='hours'||k=='area'?' full':'')+'"><label>'+l+'</label><input id="ad_'+k+'" value="'+esc(contact[k])+'"></div>'}).join('')+'</div><button class="btn pri" style="margin-top:16px" onclick="saveContact()">Save contact info</button>';}
 function saveContact(){['phone','phone2','email','address','hours','area'].forEach(function(k){contact[k]=document.getElementById('ad_'+k).value;});LS.set('gimo_contact',contact);renderContact();render();toast('Contact info updated');}
 function homePane(){return '<div class="field full"><label>Hero tagline</label><textarea id="ad_heroTag">'+esc(contact.heroTag)+'</textarea></div><button class="btn pri" style="margin-top:14px" onclick="saveHome()">Save homepage</button>';}
@@ -646,6 +647,57 @@ function medirPane(){
     +'<p style="font-size:12px;color:var(--grey-l);margin:10px 0 0">Until this is switched on, bookings are delivered to you exactly as now (email &amp; text). No rider card details are ever sent.</p>';
 }
 function openMediroutes(){var u=(mediroutes.url||DEFAULT_MEDIR.url).trim();if(!/^https?:\/\//i.test(u))u='https://'+u;window.open(u,'_blank','noopener');}
+
+/* ---- Facility trip queue (shared backend: Cloudflare Worker + D1) ---- */
+function queuePane(){
+  var base=(window.GIMOApi&&GIMOApi.base())||'';var key=LS.get('gimo_admin_key','');
+  var h='<div style="display:flex;align-items:center;gap:11px;margin-bottom:6px">'
+    +'<div style="width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,var(--sky),var(--sky-d));display:flex;align-items:center;justify-content:center;flex:none"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#fff" stroke-width="1.9"><path d="M3 13l2-5a2 2 0 0 1 1.9-1.4h8.2A2 2 0 0 1 17 8l2 5"/><path d="M3 13h18v4h-2M5 17H3v-4"/><circle cx="7.5" cy="17" r="1.6"/><circle cx="16.5" cy="17" r="1.6"/></svg></div>'
+    +'<div><h4 style="font-size:16px;margin:0">Facility trip queue</h4><p style="color:var(--grey);font-size:13px;margin:0">Live requests from partner facilities — assign driver &amp; pickup</p></div></div>';
+  h+='<p style="color:var(--grey);font-size:13.5px;margin:10px 0 14px">Trips submitted on the facility dashboard land here once the shared backend is connected. Saving an assignment updates that facility’s dashboard instantly. (Connect this on your own device; to turn it on for all facilities, your developer sets the backend URL in the site.)</p>';
+  h+='<div class="fgrid"><div class="field"><label>Backend URL</label><input id="q_base" value="'+esc(base)+'" placeholder="https://gimo-backend.&lt;you&gt;.workers.dev"></div>'
+    +'<div class="field"><label>Admin key</label><input id="q_key" type="password" value="'+esc(key)+'" placeholder="Your ADMIN_KEY secret"></div></div>';
+  h+='<div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap"><button class="btn pri sm" onclick="saveQueueCfg()">Save &amp; connect</button><button class="btn ghost sm" onclick="loadQueue()">↻ Refresh</button></div>';
+  h+='<div id="queueList" style="margin-top:16px"><p style="color:var(--grey-l);font-size:13px">Enter the backend URL and admin key, then Save &amp; connect.</p></div>';
+  return h;
+}
+function saveQueueCfg(){
+  var base=(document.getElementById('q_base').value||'').trim();
+  var key=(document.getElementById('q_key').value||'').trim();
+  if(window.GIMOApi)GIMOApi.setBase(base);
+  LS.set('gimo_admin_key',key);toast('Backend connected');loadQueue();
+}
+var QSTATUS=['requested','assigned','completed','cancelled'];
+function loadQueue(){
+  var el=document.getElementById('queueList');if(!el)return;
+  var key=LS.get('gimo_admin_key','');
+  if(!(window.GIMOApi&&GIMOApi.configured()&&key)){el.innerHTML='<p style="color:var(--grey-l);font-size:13px">Enter the backend URL and admin key, then Save &amp; connect.</p>';return;}
+  el.innerHTML='<p style="color:var(--grey-l);font-size:13px">Loading…</p>';
+  GIMOApi.adminTrips(key).then(function(r){
+    var t=r.trips||[];
+    if(!t.length){el.innerHTML='<p style="color:var(--grey-l);font-size:13px">No trip requests yet.</p>';return;}
+    el.innerHTML=t.map(function(x){
+      var ref='GF-'+String(x.id||'').slice(0,5).toUpperCase();
+      var sel='<select id="qs_'+x.id+'" style="padding:7px 9px;font-size:13px">'+QSTATUS.map(function(s){return '<option'+((x.status||'requested')===s?' selected':'')+'>'+s+'</option>';}).join('')+'</select>';
+      return '<div style="border:1px solid var(--line);border-radius:12px;padding:13px 14px;margin-bottom:10px">'
+        +'<div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap"><b style="font-family:var(--hd)">'+esc(x.facility_name||'Facility')+' · '+esc(x.rider_name||'Rider')+'</b><span style="font-size:12px;color:var(--grey)">'+ref+' · '+esc(x.status||'requested')+'</span></div>'
+        +'<div style="font-size:13px;color:var(--grey);margin-top:4px">'+esc(x.pickup||'')+' → '+esc(x.dropoff||'')+'</div>'
+        +'<div style="font-size:13px;color:var(--grey)">'+esc(x.trip_date||'')+' '+esc(x.trip_time||'')+' · '+esc(x.mobility||'')+(x.round_trip?' · Round trip':'')+(x.fare_estimate?(' · '+esc(x.fare_estimate)):'')+'</div>'
+        +(x.notes?'<div style="font-size:12.5px;color:var(--grey-l);margin-top:3px">'+esc(x.notes)+'</div>':'')
+        +'<div class="fgrid" style="margin-top:10px"><div class="field"><label>Driver</label><input id="qd_'+x.id+'" value="'+esc(x.driver||'')+'" placeholder="Driver name"></div>'
+        +'<div class="field"><label>Vehicle</label><input id="qv_'+x.id+'" value="'+esc(x.vehicle||'')+'" placeholder="Van / plate"></div>'
+        +'<div class="field"><label>Pickup ETA</label><input id="qe_'+x.id+'" value="'+esc(x.pickup_eta||'')+'" placeholder="e.g. 9:15 AM"></div>'
+        +'<div class="field"><label>Status</label>'+sel+'</div></div>'
+        +'<div style="margin-top:10px"><button class="btn pri sm" onclick="assignTrip(\''+x.id+'\')">Save assignment</button></div>'
+        +'</div>';
+    }).join('');
+  }).catch(function(e){el.innerHTML='<p style="color:#c0392b;font-size:13px">'+esc(e.message||'Could not load the queue.')+'</p>';});
+}
+function assignTrip(id){
+  var key=LS.get('gimo_admin_key','');if(!key)return;
+  var d={driver:(document.getElementById('qd_'+id).value||'').trim(),vehicle:(document.getElementById('qv_'+id).value||'').trim(),pickup_eta:(document.getElementById('qe_'+id).value||'').trim(),status:document.getElementById('qs_'+id).value};
+  GIMOApi.assign(key,id,d).then(function(){toast('Trip updated — facility dashboard synced');loadQueue();}).catch(function(e){toast(e.message||'Update failed');});
+}
 
 /* ---- Facility proposal: personalize for a client + share by email/text/social ---- */
 function proposalBase(){try{return new URL('proposal/',location.href.split('#')[0]).href;}catch(e){return 'https://gimocons.com/proposal/';}}

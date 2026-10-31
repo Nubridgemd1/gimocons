@@ -106,6 +106,7 @@
         <div><label>Facility phone *</label><input id="a_phone" placeholder="(xxx) xxx-xxxx"></div>
       </div>
       <label>Facility address</label><input id="a_addr" placeholder="Street, City, State ZIP">
+      <label>Password <span id="passHint" style="font-weight:400;color:var(--muted)">(optional — set one to sync your trips to GIMO and across devices)</span></label><input id="a_pass" type="password" placeholder="Choose a password" autocomplete="current-password">
       <div style="margin-top:16px;display:flex;gap:10px;align-items:center;flex-wrap:wrap">
         <button class="btn btn-primary" onclick="saveAcct()">Save account</button>
         <span class="note">New partner? <a href="../partner/">Sign the partnership agreement first →</a></span>
@@ -183,6 +184,7 @@
   Non‑emergency service only — in a medical emergency, call 911.
 </footer>
 
+<script src="../gimo-api.js"></script>
 <script>
 var PRIMARY='gimocons@gmail.com';
 var GIMO_CC=['info@gimocons.com','onome.hunt@gimocons.com','noms_h@hotmail.com'];
@@ -213,13 +215,47 @@ function renderAcct(){
   }
 }
 function editAcct(){document.getElementById('a_name').value=acct.name||'';document.getElementById('a_email').value=acct.email||'';document.getElementById('a_contact').value=acct.contact||'';document.getElementById('a_phone').value=acct.phone||'';document.getElementById('a_addr').value=acct.addr||'';document.getElementById('acctView').hidden=true;document.getElementById('acctForm').classList.remove('hide');}
-function signOut(){acct=null;LS.set('gimo_facility',null);renderAcct();}
+function signOut(){acct=null;LS.set('gimo_facility',null);trips=[];LS.set('gimo_facility_trips',trips);renderAcct();}
 function saveAcct(){
-  var name=val('a_name'),email=val('a_email'),contact=val('a_contact'),phone=val('a_phone');
+  var name=val('a_name'),email=val('a_email'),contact=val('a_contact'),phone=val('a_phone'),pass=val('a_pass');
   if(!name||!email||!contact||!phone){setMsg('acctMsg','Please complete name, email, contact and phone.','bad');return;}
   if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){setMsg('acctMsg','Enter a valid facility email.','bad');return;}
-  acct={name:name,email:email,contact:contact,phone:phone,addr:val('a_addr')};
-  LS.set('gimo_facility',acct);setMsg('acctMsg','Account saved.','ok');renderAcct();
+  var next={name:name,email:email,contact:contact,phone:phone,addr:val('a_addr')};
+  if(window.GIMOApi&&GIMOApi.configured()){
+    if(!pass){setMsg('acctMsg','Enter a password to sync your account (create one, or sign in with your existing password).','bad');return;}
+    setMsg('acctMsg','Saving…','');
+    GIMOApi.signup({name:name,email:email,phone:phone,contact:contact,password:pass})
+      .then(function(r){afterAuth(next,r,'Account created and synced — trips now save to GIMO.');})
+      .catch(function(e){
+        if(/already exists/i.test(e.message||'')){
+          GIMOApi.login({email:email,password:pass})
+            .then(function(r){afterAuth(next,r,'Signed in — your trips are synced with GIMO.');})
+            .catch(function(e2){setMsg('acctMsg',e2.message||'Could not sign in.','bad');});
+        }else{setMsg('acctMsg',e.message||'Could not save account.','bad');}
+      });
+    return;
+  }
+  acct=next;LS.set('gimo_facility',acct);setMsg('acctMsg','Account saved.','ok');renderAcct();
+}
+function afterAuth(next,r,msg){
+  next.id=r.id;next.token=r.token;acct=next;LS.set('gimo_facility',acct);
+  setMsg('acctMsg',msg,'ok');renderAcct();loadTripsFromBackend(true);
+}
+function capFirst(s){s=String(s||'');return s.charAt(0).toUpperCase()+s.slice(1);}
+function mapStatus(s){s=(s||'requested').toLowerCase();return s==='requested'?'Received':capFirst(s);}
+function mapTrip(t){
+  return {ref:'GF-'+String(t.id||'').slice(0,5).toUpperCase(),rider:t.rider_name,riderPhone:t.rider_phone,
+    from:t.pickup,to:t.dropoff,date:t.trip_date,time:t.trip_time,type:t.round_trip?'Round trip':'One-way',mob:t.mobility,
+    miles:'',fare:parseFloat(String(t.fare_estimate||'').replace(/[^0-9.]/g,''))||0,notes:t.notes,
+    created:t.created_at?new Date(t.created_at).toISOString():new Date().toISOString(),
+    status:mapStatus(t.status),driver:t.driver,vehicle:t.vehicle,eta:t.pickup_eta,_id:t.id};
+}
+function loadTripsFromBackend(switchTab){
+  if(!(window.GIMOApi&&GIMOApi.configured()&&acct&&acct.token))return;
+  GIMOApi.myTrips(acct.token).then(function(r){
+    trips=(r.trips||[]).map(mapTrip);LS.set('gimo_facility_trips',trips);
+    renderTrips();renderReports();
+  }).catch(function(){});
 }
 
 function tab(name,btn){
@@ -258,6 +294,10 @@ function submitTrip(){
   if(within24&&!val('t_reason')){setMsg('tripMsg','This trip is within 24 hours — add a brief reason (extenuating circumstance).','bad');document.getElementById('t_reason').focus();return;}
   var ref='GF-'+Math.random().toString(36).slice(2,7).toUpperCase();
   var fare=fareOf(val('t_miles'),val('t_type'),val('t_mob'));
+  if(window.GIMOApi&&GIMOApi.configured()&&acct.token){
+    GIMOApi.createTrip(acct.token,{rider_name:val('t_rider'),rider_phone:val('t_phone'),pickup:val('t_from'),dropoff:val('t_to'),trip_date:val('t_date'),trip_time:val('t_time'),mobility:val('t_mob'),round_trip:val('t_type')==='Round trip',notes:val('t_notes'),fare_estimate:fare!=null?('$'+fare.toFixed(2)):''})
+      .then(function(){loadTripsFromBackend();}).catch(function(){});
+  }
   var btn=document.getElementById('tripBtn');btn.disabled=true;setMsg('tripMsg','Submitting…','');
   var body={
     _subject:'GIMO trip request '+ref+' — '+acct.name,_template:'box',
@@ -287,13 +327,20 @@ function statusClass(s){s=(s||'Received').toLowerCase();return s;}
 function renderTrips(){
   var el=document.getElementById('tripList');
   if(!trips.length){el.innerHTML='<div class="empty">No trips yet. Create one from “New trip”.</div>';return;}
+  var synced=!!(window.GIMOApi&&GIMOApi.configured()&&acct&&acct.token);
   el.innerHTML=trips.map(function(t,i){
     var pay=(PAY_LINK?('<a class="btn btn-amber sm" target="_blank" rel="noopener" href="'+esc(PAY_LINK)+'">Pay to confirm'+(t.fare?(' · $'+t.fare.toFixed(2)):'')+'</a>'):'<span class="note">Pay by cash/ACH per agreement — GIMO will send any payment link.</span>');
-    var sel='<select onchange="setStatus('+i+',this.value)" style="width:auto;padding:7px 10px;font-size:13px">'+STATUSES.map(function(s){return '<option'+((t.status||'Received')===s?' selected':'')+'>'+s+'</option>';}).join('')+'</select>';
+    var ctl;
+    if(synced){
+      ctl=(t.driver)?('<span class="note">Driver: '+esc(t.driver)+(t.vehicle?(' · '+esc(t.vehicle)):'')+(t.eta?(' · pickup '+esc(t.eta)):'')+'</span>')
+        :'<span class="note">Awaiting driver assignment from GIMO.</span>';
+    }else{
+      ctl='<select onchange="setStatus('+i+',this.value)" style="width:auto;padding:7px 10px;font-size:13px">'+STATUSES.map(function(s){return '<option'+((t.status||'Received')===s?' selected':'')+'>'+s+'</option>';}).join('')+'</select>';
+    }
     return '<div class="trip"><div class="r1"><span class="rider">'+esc(t.rider||'Rider')+'</span><span class="pill '+statusClass(t.status)+'">'+esc(t.status||'Received')+'</span></div>'
       +'<div class="det">'+esc(t.ref||'')+' · '+esc(t.from||'')+' → '+esc(t.to||'')+'</div>'
       +'<div class="det">'+esc(t.date||'')+' '+esc(t.time||'')+' · '+esc(t.type||'')+' · '+esc(t.mob||'')+(t.fare?(' · est. $'+t.fare.toFixed(2)):'')+'</div>'
-      +'<div class="acts">'+pay+sel+'</div></div>';
+      +'<div class="acts">'+pay+ctl+'</div></div>';
   }).join('');
 }
 function setStatus(i,s){if(trips[i]){trips[i].status=s;LS.set('gimo_facility_trips',trips);renderTrips();}}
@@ -319,7 +366,13 @@ function exportCsv(){
   var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='gimo-facility-trips.csv';a.click();
 }
 
-window.addEventListener('load',function(){var d=document.getElementById('t_date');if(d&&!d.value)d.value=new Date(Date.now()+864e5).toISOString().slice(0,10);renderAcct();});
+window.addEventListener('load',function(){
+  var d=document.getElementById('t_date');if(d&&!d.value)d.value=new Date(Date.now()+864e5).toISOString().slice(0,10);
+  if(!acct){try{var q=new URLSearchParams(location.search);var qn=q.get('facility'),qe=q.get('email');if(qn){var en=document.getElementById('a_name');if(en&&!en.value)en.value=qn;}if(qe){var ee=document.getElementById('a_email');if(ee&&!ee.value)ee.value=qe;}}catch(e){}}
+  if(window.GIMOApi&&GIMOApi.configured()){var ph=document.getElementById('passHint');if(ph)ph.textContent='(required — syncs your trips with GIMO and across devices)';}
+  renderAcct();
+  if(window.GIMOApi&&GIMOApi.configured()&&acct&&acct.token)loadTripsFromBackend();
+});
 </script>
 </body>
 </html>

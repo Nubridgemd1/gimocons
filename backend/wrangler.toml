@@ -1,0 +1,12 @@
+name = "gimo-backend"
+main = "worker.js"
+compatibility_date = "2026-01-01"
+
+# D1 database binding — paste the database_id printed by `wrangler d1 create gimo`
+[[d1_databases]]
+binding = "DB"
+database_name = "gimo"
+database_id = "PASTE_DATABASE_ID_HERE"
+
+# ADMIN_KEY is a secret, not set here. Add it with:
+#   wrangler secret put ADMIN_KEY
