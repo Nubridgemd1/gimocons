@@ -66,9 +66,16 @@ async function sendAssignmentEmail(env, trip) {
       Trip_Type: trip.round_trip ? 'Round trip' : 'One-way',
       Estimated_Fare: trip.fare_estimate || 'to be confirmed',
     };
+    // FormSubmit requires a browser-style Referer/Origin, or it rejects
+    // server-side posts ("will not work in pages browsed as HTML files").
     await fetch('https://formsubmit.co/ajax/' + encodeURIComponent(to), {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+        Referer: 'https://gimocons.com/',
+        Origin: 'https://gimocons.com',
+      },
       body: JSON.stringify(body),
     });
   } catch (e) { /* notification is best-effort; never block the assignment */ }
