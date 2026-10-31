@@ -106,6 +106,7 @@
           <button class="btn btn-primary" onclick="doLogin()">Sign in</button>
           <span class="note">New facility? <a href="#" onclick="showSignup();return false;">Create your account</a></span>
         </div>
+        <p class="note" style="margin-top:12px"><a href="#" onclick="showForgot();return false;">Forgot your password?</a></p>
         <div class="msg" id="loginMsg"></div>
       </div>
       <!-- CREATE ACCOUNT -->
@@ -127,6 +128,31 @@
           <span class="note">Already have an account? <a href="#" onclick="showLogin();return false;">Sign in</a></span>
         </div>
         <div class="msg" id="acctMsg"></div>
+      </div>
+
+      <!-- FORGOT PASSWORD -->
+      <div id="forgotForm" class="hide">
+        <h3 style="font-size:17px;margin:0 0 4px">Reset your password</h3>
+        <p class="lead" style="margin-top:4px">Enter your account email — we’ll send a secure reset link to that address.</p>
+        <label>Account email</label><input id="fp_email" type="email" placeholder="admin@facility.com" autocomplete="username" onkeydown="if(event.key==='Enter')doForgot()">
+        <div style="margin-top:16px;display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+          <button class="btn btn-primary" onclick="doForgot()">Send reset link</button>
+          <span class="note"><a href="#" onclick="showLogin();return false;">← Back to sign in</a></span>
+        </div>
+        <div class="msg" id="forgotMsg"></div>
+      </div>
+
+      <!-- SET NEW PASSWORD (opened from the emailed reset link) -->
+      <div id="resetForm" class="hide">
+        <h3 style="font-size:17px;margin:0 0 4px">Set a new password</h3>
+        <p class="lead" style="margin-top:4px">Choose a new password for your facility account, then you’ll be signed in.</p>
+        <label>New password</label><input id="rp_pass" type="password" placeholder="At least 6 characters" autocomplete="new-password">
+        <label>Confirm new password</label><input id="rp_pass2" type="password" placeholder="Re-enter new password" autocomplete="new-password" onkeydown="if(event.key==='Enter')doReset()">
+        <div style="margin-top:16px;display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+          <button class="btn btn-primary" onclick="doReset()">Set new password &amp; sign in</button>
+          <span class="note"><a href="#" onclick="showLogin();return false;">← Back to sign in</a></span>
+        </div>
+        <div class="msg" id="resetMsg"></div>
       </div>
     </div>
   </div>
@@ -220,6 +246,7 @@ var PRICING={perMile:3.5,wheelchair:75,stretcher:45};
 var LS={get:function(k,d){try{var v=localStorage.getItem(k);return v?JSON.parse(v):d;}catch(e){return d;}},set:function(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}};
 var acct=LS.get('gimo_facility',null);
 var trips=LS.get('gimo_facility_trips',[]);
+var _resetToken=null;
 function val(id){var el=document.getElementById(id);return el?el.value.trim():'';}
 function setMsg(id,t,c){var m=document.getElementById(id);if(m){m.textContent=t;m.className='msg '+(c||'');}}
 function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
@@ -240,8 +267,31 @@ function renderAcct(){
 }
 function editAcct(){document.getElementById('a_name').value=acct.name||'';document.getElementById('a_email').value=acct.email||'';document.getElementById('a_contact').value=acct.contact||'';document.getElementById('a_phone').value=acct.phone||'';document.getElementById('a_addr').value=acct.addr||'';document.getElementById('acctView').hidden=true;document.getElementById('acctForm').classList.remove('hide');showSignup();}
 function signOut(){acct=null;LS.set('gimo_facility',null);trips=[];LS.set('gimo_facility_trips',trips);var le=document.getElementById('l_email'),lp=document.getElementById('l_pass');if(le)le.value='';if(lp)lp.value='';renderAcct();showLogin();setMsg('loginMsg','','');}
-function showLogin(){var l=document.getElementById('loginForm'),s=document.getElementById('signupForm');if(l)l.classList.remove('hide');if(s)s.classList.add('hide');}
-function showSignup(){var l=document.getElementById('loginForm'),s=document.getElementById('signupForm');if(l)l.classList.add('hide');if(s)s.classList.remove('hide');}
+function authShow(id){['loginForm','signupForm','forgotForm','resetForm'].forEach(function(x){var el=document.getElementById(x);if(el)el.classList.toggle('hide',x!==id);});}
+function showLogin(){authShow('loginForm');}
+function showSignup(){authShow('signupForm');}
+function showForgot(){authShow('forgotForm');var fe=document.getElementById('fp_email'),le=document.getElementById('l_email');if(fe&&!fe.value&&le)fe.value=le.value||'';setMsg('forgotMsg','','');}
+function showReset(){authShow('resetForm');}
+function doForgot(){
+  var email=val('fp_email');
+  if(!email){setMsg('forgotMsg','Enter your account email.','bad');return;}
+  if(!(window.GIMOApi&&GIMOApi.configured())){setMsg('forgotMsg','Password reset is temporarily unavailable — please try again shortly.','bad');return;}
+  setMsg('forgotMsg','Sending…','');
+  var done=function(){setMsg('forgotMsg','✓ If an account exists for '+email+', a secure reset link is on its way. Check your inbox (and spam) — it expires in 1 hour.','ok');};
+  GIMOApi.forgot({email:email}).then(done).catch(done);
+}
+function doReset(){
+  var p1=document.getElementById('rp_pass').value,p2=document.getElementById('rp_pass2').value;
+  if(!p1||p1.length<6){setMsg('resetMsg','Password must be at least 6 characters.','bad');return;}
+  if(p1!==p2){setMsg('resetMsg','The two passwords don’t match.','bad');return;}
+  if(!_resetToken){setMsg('resetMsg','Missing reset link — please open the link from your email again.','bad');return;}
+  if(!(window.GIMOApi&&GIMOApi.configured())){setMsg('resetMsg','Reset is temporarily unavailable — please try again shortly.','bad');return;}
+  setMsg('resetMsg','Updating…','');
+  GIMOApi.reset({token:_resetToken,password:p1}).then(function(r){
+    _resetToken=null; try{history.replaceState({},'',location.pathname);}catch(e){}
+    afterAuth({name:r.name||'',email:r.email||'',contact:'',phone:r.phone||'',addr:''},r,'Password updated — you are signed in.');
+  }).catch(function(e){setMsg('resetMsg',(e&&e.message)||'Could not reset — the link may have expired. Request a new one.','bad');});
+}
 function doLogin(){
   var email=val('l_email');var pe=document.getElementById('l_pass');var pass=pe?pe.value:'';
   if(!email||!pass){setMsg('loginMsg','Enter your email and password.','bad');return;}
@@ -403,6 +453,14 @@ function exportCsv(){
 
 window.addEventListener('load',function(){
   var d=document.getElementById('t_date');if(d&&!d.value)d.value=new Date(Date.now()+864e5).toISOString().slice(0,10);
+  var _rt=null;try{_rt=new URLSearchParams(location.search).get('reset');}catch(e){}
+  if(_rt){
+    _resetToken=_rt;
+    var av=document.getElementById('acctView'),af=document.getElementById('acctForm'),dh=document.getElementById('dash'),wh=document.getElementById('who');
+    if(av)av.hidden=true; if(af)af.classList.remove('hide'); if(dh)dh.classList.add('hide'); if(wh)wh.textContent='';
+    showReset();
+    return;
+  }
   if(!acct){
     var hasParams=false;
     try{var q=new URLSearchParams(location.search);var qn=q.get('facility'),qe=q.get('email');

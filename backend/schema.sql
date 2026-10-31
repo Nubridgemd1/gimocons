@@ -9,8 +9,13 @@ CREATE TABLE IF NOT EXISTS facilities (
   salt         TEXT,
   pass_hash    TEXT,
   token        TEXT,
+  reset_token  TEXT,
+  reset_expires INTEGER,
   created_at   INTEGER
 );
+-- On an existing database, add the reset columns once:
+--   ALTER TABLE facilities ADD COLUMN reset_token TEXT;
+--   ALTER TABLE facilities ADD COLUMN reset_expires INTEGER;
 CREATE INDEX IF NOT EXISTS idx_fac_token ON facilities(token);
 CREATE INDEX IF NOT EXISTS idx_fac_email ON facilities(email);
 

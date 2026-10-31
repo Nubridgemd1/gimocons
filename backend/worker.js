@@ -81,6 +81,27 @@ async function sendAssignmentEmail(env, trip) {
   } catch (e) { /* notification is best-effort; never block the assignment */ }
 }
 
+// Email a password-reset link to the facility (CC'd via FormSubmit, same path as other mail).
+async function sendResetEmail(env, fac, link) {
+  try {
+    const to = (env.NOTIFY_TO || 'gimocons@gmail.com').trim();
+    const body = {
+      _subject: 'Reset your GIMO facility password',
+      _template: 'box',
+      _cc: fac.email || '',
+      Facility: fac.name || '',
+      Account_Email: fac.email || '',
+      Reset_Link: link,
+      Note: 'Open the reset link to set a new password. It expires in 1 hour. If you did not request this, you can ignore this email.',
+    };
+    await fetch('https://formsubmit.co/ajax/' + encodeURIComponent(to), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json', Referer: 'https://gimocons.com/', Origin: 'https://gimocons.com' },
+      body: JSON.stringify(body),
+    });
+  } catch (e) { /* best-effort */ }
+}
+
 export default {
   async fetch(req, env, ctx) {
     const origin = req.headers.get('Origin') || '';
@@ -134,6 +155,35 @@ export default {
         const token = makeToken();
         await env.DB.prepare('UPDATE facilities SET token=? WHERE id=?').bind(token, row.id).run();
         return json({ id: row.id, token, name: row.name, email: row.email, phone: row.phone }, 200, origin);
+      }
+
+      if (p === '/api/facility/forgot' && req.method === 'POST') {
+        const b = await req.json();
+        const email = (b.email || '').trim().toLowerCase();
+        const row = email ? await env.DB.prepare('SELECT id,name,email FROM facilities WHERE email=?').bind(email).first() : null;
+        if (row) {
+          const token = makeToken(), expires = Date.now() + 3600000; // 1 hour
+          await env.DB.prepare('UPDATE facilities SET reset_token=?, reset_expires=? WHERE id=?').bind(token, expires, row.id).run();
+          const base = (origin || 'https://gimocons.com').replace(/\/$/, '');
+          const link = base + '/facility/?reset=' + token;
+          if (ctx && ctx.waitUntil) ctx.waitUntil(sendResetEmail(env, row, link));
+          else await sendResetEmail(env, row, link);
+        }
+        return json({ ok: true }, 200, origin); // generic — never reveal whether the email exists
+      }
+
+      if (p === '/api/facility/reset' && req.method === 'POST') {
+        const b = await req.json();
+        const token = (b.token || '').trim();
+        if (!token || !b.password) return json({ error: 'Invalid request.' }, 400, origin);
+        if (String(b.password).length < 6) return json({ error: 'Password must be at least 6 characters.' }, 400, origin);
+        const row = await env.DB.prepare('SELECT * FROM facilities WHERE reset_token=?').bind(token).first();
+        if (!row || !row.reset_expires || row.reset_expires < Date.now())
+          return json({ error: 'This reset link is invalid or has expired — please request a new one.' }, 400, origin);
+        const salt = makeToken(), pass_hash = await sha256(salt + ':' + b.password), sess = makeToken();
+        await env.DB.prepare('UPDATE facilities SET salt=?, pass_hash=?, token=?, reset_token=NULL, reset_expires=NULL WHERE id=?')
+          .bind(salt, pass_hash, sess, row.id).run();
+        return json({ id: row.id, token: sess, name: row.name, email: row.email, phone: row.phone }, 200, origin);
       }
 
       /* ---------------- Trips (facility) ---------------- */

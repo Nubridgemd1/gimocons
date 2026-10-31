@@ -44,6 +44,8 @@
     // facility accounts
     signup: function (d) { return req('/api/facility/signup', { method: 'POST', body: d }); },
     login: function (d) { return req('/api/facility/login', { method: 'POST', body: d }); },
+    forgot: function (d) { return req('/api/facility/forgot', { method: 'POST', body: d }); },
+    reset: function (d) { return req('/api/facility/reset', { method: 'POST', body: d }); },
     // trips (facility — Bearer token)
     createTrip: function (token, d) { return req('/api/trips', { method: 'POST', headers: { Authorization: 'Bearer ' + token }, body: d }); },
     myTrips: function (token) { return req('/api/trips', { headers: { Authorization: 'Bearer ' + token } }); },
