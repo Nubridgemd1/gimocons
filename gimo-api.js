@@ -10,7 +10,7 @@
  * GIMOApi.setBase('https://...'), which stores it in localStorage.
  */
 (function () {
-  var API_BASE = ''; // <-- paste your Worker URL here after deploying
+  var API_BASE = 'https://gimo-backend.gimo-9e1.workers.dev'; // GIMO shared backend (Cloudflare Worker + D1)
 
   try { var o = localStorage.getItem('gimo_api_base'); if (o) API_BASE = o; } catch (e) {}
 
