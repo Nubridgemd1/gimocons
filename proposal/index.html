@@ -18,7 +18,8 @@
 <style>
   /* keep the colorful bands when printing / saving as PDF */
   *{ -webkit-print-color-adjust:exact; print-color-adjust:exact; }
-  .sharebar{position:sticky;top:0;z-index:40;background:#0b2135;border-bottom:1px solid rgba(255,255,255,.12);display:flex;justify-content:flex-end;gap:10px;padding:9px max(16px,env(safe-area-inset-right,0px)) 9px max(16px,env(safe-area-inset-left,0px))}
+  html,body{overflow-x:hidden}
+  .sharebar{position:sticky;top:0;z-index:40;background:#0b2135;border-bottom:1px solid rgba(255,255,255,.12);display:flex;justify-content:flex-end;align-items:center;flex-wrap:wrap;gap:8px 10px;padding:9px max(16px,env(safe-area-inset-right,0px)) 9px max(16px,env(safe-area-inset-left,0px))}
   .sbtn{display:inline-flex;align-items:center;gap:7px;font-family:'Jost',system-ui,sans-serif;font-weight:600;font-size:13.5px;color:#0b2135;background:#f6c069;border:0;border-radius:9px;padding:9px 16px;cursor:pointer;text-decoration:none}
   .sbtn.alt{background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.3)}
   .sbtn:hover{filter:brightness(1.05)}
@@ -33,7 +34,7 @@
   .shmenu .full{grid-column:1 / -1}
   .shmenu hr{grid-column:1 / -1;border:0;border-top:1px solid #eef2f6;margin:4px 2px}
   @media print{ .sharebar{display:none} }
-  @media(max-width:520px){ .shmenu{position:fixed;left:12px;right:12px;top:auto;bottom:12px;min-width:0} .sbtn{padding:9px 13px;font-size:13px} }
+  @media(max-width:520px){ .shmenu{position:fixed;left:12px;right:12px;top:auto;bottom:12px;min-width:0} .sbtn{padding:9px 12px;font-size:12.5px} .sharebar{justify-content:center;gap:7px} .shmsg{flex-basis:100%;text-align:center} }
 </style>
 <title>GIMO Facility Partnership</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
