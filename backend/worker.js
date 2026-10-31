@@ -36,8 +36,46 @@ async function sha256(s) {
 const uid = () => crypto.randomUUID();
 const makeToken = () => [...crypto.getRandomValues(new Uint8Array(24))].map(b => b.toString(16).padStart(2, '0')).join('');
 
+// Email the facility (+ GIMO) when a trip is assigned, via FormSubmit — the same
+// path the site already uses. Overridable with NOTIFY_TO / NOTIFY_CC env vars.
+async function sendAssignmentEmail(env, trip) {
+  try {
+    const to = (env.NOTIFY_TO || 'gimocons@gmail.com').trim();
+    const fac = await env.DB.prepare('SELECT email,name FROM facilities WHERE id=?').bind(trip.facility_id).first();
+    const defaultCc = 'info@gimocons.com,onome.hunt@gimocons.com,noms_h@hotmail.com';
+    const cc = [];
+    if (fac && fac.email) cc.push(fac.email);
+    (env.NOTIFY_CC != null ? env.NOTIFY_CC : defaultCc).split(',').map(s => s.trim()).filter(Boolean).forEach(x => cc.push(x));
+    const ref = 'GF-' + String(trip.id || '').slice(0, 5).toUpperCase();
+    const body = {
+      _subject: 'GIMO trip ' + ref + ' — driver assigned (' + (trip.facility_name || '') + ')',
+      _template: 'box',
+      _cc: cc.join(','),
+      Status: (trip.status || '').toUpperCase(),
+      Reference: ref,
+      Facility: trip.facility_name || '',
+      Rider: trip.rider_name || '',
+      Pickup: trip.pickup || '',
+      Destination: trip.dropoff || '',
+      Date: trip.trip_date || '',
+      Pickup_Time: trip.trip_time || '',
+      Driver: trip.driver || '(to be confirmed)',
+      Vehicle: trip.vehicle || '(to be confirmed)',
+      Pickup_ETA: trip.pickup_eta || '(to be confirmed)',
+      Mobility: trip.mobility || '',
+      Trip_Type: trip.round_trip ? 'Round trip' : 'One-way',
+      Estimated_Fare: trip.fare_estimate || 'to be confirmed',
+    };
+    await fetch('https://formsubmit.co/ajax/' + encodeURIComponent(to), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+      body: JSON.stringify(body),
+    });
+  } catch (e) { /* notification is best-effort; never block the assignment */ }
+}
+
 export default {
-  async fetch(req, env) {
+  async fetch(req, env, ctx) {
     const origin = req.headers.get('Origin') || '';
     if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders(origin) });
 
@@ -138,6 +176,10 @@ export default {
         ).bind(b.driver || '', b.vehicle || '', b.pickup_eta || '', b.status || 'assigned', Date.now(), assign[1]).run();
         const trip = await env.DB.prepare('SELECT * FROM trips WHERE id=?').bind(assign[1]).first();
         if (!trip) return json({ error: 'Trip not found.' }, 404, origin);
+        if (b.notify !== false && (trip.driver || (trip.status && trip.status !== 'requested'))) {
+          if (ctx && ctx.waitUntil) ctx.waitUntil(sendAssignmentEmail(env, trip));
+          else await sendAssignmentEmail(env, trip);
+        }
         return json({ trip }, 200, origin);
       }
 
