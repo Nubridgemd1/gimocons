@@ -613,7 +613,7 @@ function openAdmin(){var ok=LS.get('gimo_admin_ok',false);
 function closeAdmin(){document.getElementById('admin').classList.remove('open');document.body.style.overflow='';}
 function adminLogin(){var u=(document.getElementById('auser').value||'').trim(),p=document.getElementById('apass').value;if(u===creds.user&&p===creds.pass){LS.set('gimo_admin_ok',true);adminHome();toast('Welcome back');}else toast('Incorrect username or password');}
 function adminLogout(){LS.set('gimo_admin_ok',false);closeAdmin();toast('Signed out');}
-function adminHome(){document.getElementById('adminContent').innerHTML='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px"><h2 style="font-size:22px">Admin console</h2><button class="btn ghost sm" onclick="adminLogout()">Sign out</button></div><div class="adtabs"><button class="on" onclick="adTab(this,0)">Contact info</button><button onclick="adTab(this,1)">Photos</button><button onclick="adTab(this,2)">Requests ('+bookings.length+')</button><button onclick="adTab(this,3)">Pricing</button><button onclick="adTab(this,4)">Homepage</button><button onclick="adTab(this,8)">Trip Queue</button><button onclick="adTab(this,9)">Payments</button><button onclick="adTab(this,5)">MediRoutes</button><button onclick="adTab(this,6)">Proposal</button><button onclick="adTab(this,7)">Security</button></div><div class="adpane on" id="ap0">'+contactPane()+'</div><div class="adpane" id="ap1">'+photosPane()+'</div><div class="adpane" id="ap2">'+bkPane()+'</div><div class="adpane" id="ap3">'+pricePane()+'</div><div class="adpane" id="ap4">'+homePane()+'</div><div class="adpane" id="ap5">'+medirPane()+'</div><div class="adpane" id="ap6">'+proposalPane()+'</div><div class="adpane" id="ap7">'+securityPane()+'</div><div class="adpane" id="ap8">'+queuePane()+'</div><div class="adpane" id="ap9">'+payPane()+'</div>';}
+function adminHome(){document.getElementById('adminContent').innerHTML='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px"><h2 style="font-size:22px">Admin console</h2><button class="btn ghost sm" onclick="adminLogout()">Sign out</button></div><div class="adtabs"><button class="on" onclick="adTab(this,0)">Contact info</button><button onclick="adTab(this,1)">Photos</button><button onclick="adTab(this,2)">Requests ('+bookings.length+')</button><button onclick="adTab(this,3)">Pricing</button><button onclick="adTab(this,4)">Homepage</button><button onclick="adTab(this,8)">Trip Queue</button><button onclick="adTab(this,10)">Facilities</button><button onclick="adTab(this,9)">Payments</button><button onclick="adTab(this,5)">MediRoutes</button><button onclick="adTab(this,6)">Proposal</button><button onclick="adTab(this,7)">Security</button></div><div class="adpane on" id="ap0">'+contactPane()+'</div><div class="adpane" id="ap1">'+photosPane()+'</div><div class="adpane" id="ap2">'+bkPane()+'</div><div class="adpane" id="ap3">'+pricePane()+'</div><div class="adpane" id="ap4">'+homePane()+'</div><div class="adpane" id="ap5">'+medirPane()+'</div><div class="adpane" id="ap6">'+proposalPane()+'</div><div class="adpane" id="ap7">'+securityPane()+'</div><div class="adpane" id="ap8">'+queuePane()+'</div><div class="adpane" id="ap9">'+payPane()+'</div><div class="adpane" id="ap10">'+facPane()+'</div>';}
 function photoRow(slot,label,defId){return '<div style="display:flex;gap:10px;align-items:center;margin-bottom:8px"><img src="'+(photoOverrides[slot]||IMG(defId,120))+'" style="width:52px;height:52px;object-fit:cover;border-radius:8px;border:1px solid var(--line);flex:none"><div style="flex:1;min-width:0"><div style="font-size:11.5px;font-weight:600;font-family:var(--hd);color:var(--grey);margin-bottom:3px">'+label+'</div><input id="ph_'+slot+'" placeholder="Paste image URL" value="'+esc(photoOverrides[slot]||'')+'" style="font-size:13px;padding:8px"></div><label class="btn ghost sm" style="cursor:pointer;flex:none">Upload<input type="file" accept="image/*" style="display:none" onchange="uploadPhoto(\''+slot+'\',this)"></label>'+(photoOverrides[slot]?'<button class="btn ghost sm" title="Reset" style="flex:none" onclick="resetPhoto(\''+slot+'\')">↺</button>':'')+'</div>';}
 function photosPane(){var h='<p style="color:var(--grey);font-size:13.5px;margin:0 0 14px">Replace any photo — paste an image URL or upload from your device. Changes save on this device and update the site instantly.</p>';
   h+='<h4 style="font-size:13px;color:var(--sky-d);margin:6px 0 8px">Hero</h4>'+photoRow('hero','Homepage hero',PIX.hero);
@@ -629,7 +629,53 @@ function uploadPhoto(slot,input){var f=input.files&&input.files[0];if(!f)return;
 function resetPhoto(slot){delete photoOverrides[slot];LS.set('gimo_photos',photoOverrides);render();document.getElementById('ap1').innerHTML=photosPane();toast('Reset to default');}
 function securityPane(){return '<p style="color:var(--grey);font-size:13.5px;margin:0 0 14px">Update the admin sign-in. Stored on this device.</p><div class="fgrid"><div class="field"><label>Admin username</label><input id="sec_user" value="'+esc(creds.user)+'"></div><div class="field"></div><div class="field"><label>New password</label><input id="sec_p1" type="password" placeholder="Leave blank to keep current"></div><div class="field"><label>Confirm new password</label><input id="sec_p2" type="password" placeholder="Confirm"></div></div><button class="btn pri" style="margin-top:14px" onclick="saveCreds()">Update credentials</button>';}
 function saveCreds(){var u=(document.getElementById('sec_user').value||'').trim(),p1=document.getElementById('sec_p1').value,p2=document.getElementById('sec_p2').value;if(!u){toast('Username required');return;}if(p1||p2){if(p1!==p2){toast('Passwords do not match');return;}if(p1.length<4){toast('Password too short (min 4)');return;}creds.pass=p1;}creds.user=u;LS.set('gimo_creds',creds);document.getElementById('sec_p1').value='';document.getElementById('sec_p2').value='';toast('Credentials updated');}
-function adTab(btn,i){document.querySelectorAll('.adtabs button').forEach(function(b){b.classList.remove('on')});btn.classList.add('on');document.querySelectorAll('.adpane').forEach(function(p,j){p.classList.toggle('on',j===i)});if(i===8)loadQueue();if(i===9)loadPayLink();}
+function adTab(btn,i){document.querySelectorAll('.adtabs button').forEach(function(b){b.classList.remove('on')});btn.classList.add('on');document.querySelectorAll('.adpane').forEach(function(p,j){p.classList.toggle('on',j===i)});if(i===8)loadQueue();if(i===9)loadPayLink();if(i===10)loadFacilities();}
+
+/* ---- Facilities: accounts opened by facilities + manage them ---- */
+var _facList=[];
+function facPane(){
+  return '<div style="display:flex;align-items:center;gap:11px;margin-bottom:6px">'
+    +'<div style="width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,var(--sky),var(--sky-d));display:flex;align-items:center;justify-content:center;flex:none"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#fff" stroke-width="1.9"><path d="M3 21V9l9-6 9 6v12"/><path d="M9 21v-6h6v6"/></svg></div>'
+    +'<div><h4 style="font-size:16px;margin:0">Facility accounts</h4><p style="color:var(--grey);font-size:13px;margin:0">Facilities that have opened an account — and manage them</p></div></div>'
+    +'<p style="color:var(--grey);font-size:13.5px;margin:10px 0 14px">Every facility with a portal account. Send a password reset, jump to their trips, or remove an account. Uses the same backend connection as the <b>Trip Queue</b> tab.</p>'
+    +'<div style="display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap"><button class="btn pri sm" onclick="loadFacilities()">↻ Load facilities</button></div>'
+    +'<div id="facList"><p style="color:var(--grey-l);font-size:13px">Connect the backend in the <b>Trip Queue</b> tab, then Load facilities.</p></div>';
+}
+function loadFacilities(){
+  var el=document.getElementById('facList');if(!el)return;
+  var key=LS.get('gimo_admin_key','');
+  if(!(window.GIMOApi&&GIMOApi.configured()&&key)){el.innerHTML='<p style="color:var(--grey-l);font-size:13px">Enter the backend URL + admin key in the <b>Trip Queue</b> tab first.</p>';return;}
+  el.innerHTML='<p style="color:var(--grey-l);font-size:13px">Loading…</p>';
+  Promise.all([GIMOApi.adminFacilities(key),GIMOApi.adminTrips(key).catch(function(){return {trips:[]};})]).then(function(res){
+    _facList=(res[0]&&res[0].facilities)||[]; var trips=(res[1]&&res[1].trips)||[];
+    var counts={}; trips.forEach(function(t){counts[t.facility_id]=(counts[t.facility_id]||0)+1;});
+    if(!_facList.length){el.innerHTML='<p style="color:var(--grey-l);font-size:13px">No facility accounts yet.</p>';return;}
+    el.innerHTML='<p style="color:var(--grey-l);font-size:12.5px;margin:0 0 10px">'+_facList.length+' account'+(_facList.length>1?'s':'')+'</p>'+_facList.map(function(f,i){
+      var n=counts[f.id]||0; var created=f.created_at?new Date(f.created_at).toLocaleDateString():'';
+      return '<div style="border:1px solid var(--line);border-radius:12px;padding:13px 14px;margin-bottom:10px">'
+        +'<div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap"><b style="font-family:var(--hd);font-size:15px">'+esc(f.name||'Facility')+'</b><span style="font-size:12px;color:var(--grey)">'+n+' trip'+(n===1?'':'s')+'</span></div>'
+        +'<div style="font-size:13px;color:var(--grey);margin-top:3px">'+esc(f.email||'')+(f.phone?(' · '+esc(f.phone)):'')+'</div>'
+        +'<div style="font-size:12.5px;color:var(--grey-l)">'+(f.contact_name?('Contact: '+esc(f.contact_name)+' · '):'')+(created?('Joined '+created):'')+'</div>'
+        +'<div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">'
+        +'<button class="btn ghost sm" onclick="facReset('+i+',this)">Send password reset</button>'
+        +'<button class="btn ghost sm" onclick="facTrips()">View trips</button>'
+        +'<button class="btn ghost sm" style="color:#c0392b;border-color:#f0c2bb" onclick="facDelete('+i+')">Remove</button>'
+        +'</div></div>';
+    }).join('');
+  }).catch(function(e){el.innerHTML='<p style="color:#c0392b;font-size:13px">'+esc((e&&e.message)||'Could not load facilities.')+'</p>';});
+}
+function facReset(i,btn){
+  var f=_facList[i]; if(!f||!f.email){toast('No email on file for this facility');return;}
+  if(btn){btn.disabled=true;btn.textContent='Sending…';}
+  GIMOApi.forgot({email:f.email}).then(function(){toast('Password reset link sent to '+f.email);if(btn){btn.textContent='Reset sent ✓';}}).catch(function(){toast('Could not send reset');if(btn){btn.disabled=false;btn.textContent='Send password reset';}});
+}
+function facTrips(){var qb=null;document.querySelectorAll('.adtabs button').forEach(function(b){if(b.textContent.indexOf('Trip Queue')>=0)qb=b;});if(qb)adTab(qb,8);}
+function facDelete(i){
+  var f=_facList[i]; if(!f)return;
+  if(!confirm('Remove the account for "'+(f.name||'this facility')+'"? This deletes the account and all its trips and cannot be undone.'))return;
+  var key=LS.get('gimo_admin_key','');
+  GIMOApi.adminDeleteFacility(key,f.id).then(function(){toast('Account removed');loadFacilities();}).catch(function(e){toast((e&&e.message)||'Remove failed — update the backend Worker first.');});
+}
 
 /* ---- Payments: one Stripe link for personal bookings + facility pay-to-confirm (shared backend settings) ---- */
 function payPane(){

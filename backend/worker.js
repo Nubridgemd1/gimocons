@@ -250,6 +250,14 @@ export default {
         return json({ pay_link: b.pay_link || '' }, 200, origin);
       }
 
+      const delFac = p.match(/^\/api\/admin\/facilities\/([^/]+)\/delete$/);
+      if (delFac && req.method === 'POST') {
+        if (!adminOk()) return json({ error: 'Unauthorized.' }, 401, origin);
+        await env.DB.prepare('DELETE FROM trips WHERE facility_id=?').bind(delFac[1]).run();
+        await env.DB.prepare('DELETE FROM facilities WHERE id=?').bind(delFac[1]).run();
+        return json({ ok: true }, 200, origin);
+      }
+
       const assign = p.match(/^\/api\/admin\/trips\/([^/]+)\/assign$/);
       if (assign && req.method === 'POST') {
         if (!adminOk()) return json({ error: 'Unauthorized.' }, 401, origin);

@@ -52,6 +52,7 @@
     // admin (X-Admin-Key)
     adminTrips: function (key, status) { return req('/api/admin/trips' + (status ? ('?status=' + encodeURIComponent(status)) : ''), { headers: { 'X-Admin-Key': key } }); },
     adminFacilities: function (key) { return req('/api/admin/facilities', { headers: { 'X-Admin-Key': key } }); },
+    adminDeleteFacility: function (key, id) { return req('/api/admin/facilities/' + encodeURIComponent(id) + '/delete', { method: 'POST', headers: { 'X-Admin-Key': key } }); },
     assign: function (key, id, d) { return req('/api/admin/trips/' + encodeURIComponent(id) + '/assign', { method: 'POST', headers: { 'X-Admin-Key': key }, body: d }); },
   };
 })();
