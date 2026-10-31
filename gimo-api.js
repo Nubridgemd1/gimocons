@@ -38,6 +38,9 @@
       try { b ? localStorage.setItem('gimo_api_base', b) : localStorage.removeItem('gimo_api_base'); } catch (e) {}
     },
     health: function () { return req('/api/health'); },
+    // public settings (e.g. Stripe pay link)
+    getSettings: function () { return req('/api/settings'); },
+    setSettings: function (key, obj) { return req('/api/admin/settings', { method: 'POST', headers: { 'X-Admin-Key': key }, body: obj }); },
     // facility accounts
     signup: function (d) { return req('/api/facility/signup', { method: 'POST', body: d }); },
     login: function (d) { return req('/api/facility/login', { method: 'POST', body: d }); },

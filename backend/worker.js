@@ -104,6 +104,12 @@ export default {
         return json({ ok: true, service: 'gimo-backend', time: Date.now() }, 200, origin);
       }
 
+      /* ---------------- Public settings (e.g. Stripe pay link) ---------------- */
+      if (p === '/api/settings' && req.method === 'GET') {
+        const row = await env.DB.prepare("SELECT v FROM settings WHERE k='pay_link'").first();
+        return json({ pay_link: (row && row.v) || '' }, 200, origin);
+      }
+
       /* ---------------- Facility accounts ---------------- */
       if (p === '/api/facility/signup' && req.method === 'POST') {
         const b = await req.json();
@@ -172,6 +178,15 @@ export default {
           'SELECT id,name,email,phone,contact_name,created_at FROM facilities ORDER BY created_at DESC'
         ).all();
         return json({ facilities: results || [] }, 200, origin);
+      }
+
+      if (p === '/api/admin/settings' && req.method === 'POST') {
+        if (!adminOk()) return json({ error: 'Unauthorized.' }, 401, origin);
+        const b = await req.json();
+        await env.DB.prepare(
+          "INSERT INTO settings (k,v) VALUES ('pay_link',?) ON CONFLICT(k) DO UPDATE SET v=excluded.v"
+        ).bind(b.pay_link || '').run();
+        return json({ pay_link: b.pay_link || '' }, 200, origin);
       }
 
       const assign = p.match(/^\/api\/admin\/trips\/([^/]+)\/assign$/);

@@ -190,7 +190,7 @@ var PRIMARY='gimocons@gmail.com';
 var GIMO_CC=['info@gimocons.com','onome.hunt@gimocons.com','noms_h@hotmail.com'];
 /* Optional: a GIMO payment link (e.g. a Stripe Payment Link). If set, "Pay to confirm" opens it;
    otherwise the facility pays by cash/ACH per the partnership agreement and GIMO sends any link. */
-var PAY_LINK='';
+var PAY_LINK='https://buy.stripe.com/dRm4gzevm0R9eVnbtD8Ra00';
 var PRICING={perMile:3.5,wheelchair:75,stretcher:45};
 
 var LS={get:function(k,d){try{var v=localStorage.getItem(k);return v?JSON.parse(v):d;}catch(e){return d;}},set:function(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}};
@@ -371,7 +371,10 @@ window.addEventListener('load',function(){
   if(!acct){try{var q=new URLSearchParams(location.search);var qn=q.get('facility'),qe=q.get('email');if(qn){var en=document.getElementById('a_name');if(en&&!en.value)en.value=qn;}if(qe){var ee=document.getElementById('a_email');if(ee&&!ee.value)ee.value=qe;}}catch(e){}}
   if(window.GIMOApi&&GIMOApi.configured()){var ph=document.getElementById('passHint');if(ph)ph.textContent='(required — syncs your trips with GIMO and across devices)';}
   renderAcct();
-  if(window.GIMOApi&&GIMOApi.configured()&&acct&&acct.token)loadTripsFromBackend();
+  if(window.GIMOApi&&GIMOApi.configured()){
+    GIMOApi.getSettings().then(function(s){ if(s&&s.pay_link){ PAY_LINK=s.pay_link; renderTrips(); } }).catch(function(){});
+    if(acct&&acct.token)loadTripsFromBackend();
+  }
 });
 </script>
 </body>
