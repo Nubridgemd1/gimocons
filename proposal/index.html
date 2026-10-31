@@ -1,0 +1,376 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="GIMO Consulting Services — NEMT partnership proposal for home-health facilities.">
+<title>GIMO Facility Partnership</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  /* Layout: a warm, colorful single-column proposal — banded sections, white cards on a sky-tinted ground, one accent hue per band. */
+  :root{
+    --navy:#0e2740; --navy2:#143a5e;
+    --sky:#1b8fd1; --sky2:#35b2e8;
+    --green:#1a9c6b; --green2:#49c58c;
+    --amber:#e79a33; --amber2:#f6c069;
+    --rose:#e25c54;
+    --ink:#15303f; --muted:#59707f;
+    --bg:#eef6fc; --card:#ffffff; --line:#dde8f1; --soft:#f4f9fd;
+    --fg:#15303f;
+    --shadow:0 18px 44px rgba(14,39,64,.10);
+    --ff-d:'Poppins',system-ui,Segoe UI,Arial,sans-serif;
+    --ff-b:'Inter',system-ui,Segoe UI,Arial,sans-serif;
+  }
+  @media (prefers-color-scheme:dark){ :root:not([data-theme="light"]){
+    --navy:#0a1d30; --navy2:#102c48;
+    --bg:#0b1722; --card:#122634; --line:#20384a; --soft:#0f2130;
+    --ink:#e8f2fa; --fg:#e8f2fa; --muted:#9db3c3;
+    --shadow:0 18px 44px rgba(0,0,0,.45); color-scheme:dark;
+  }}
+  :root[data-theme="dark"]{
+    --navy:#0a1d30; --navy2:#102c48;
+    --bg:#0b1722; --card:#122634; --line:#20384a; --soft:#0f2130;
+    --ink:#e8f2fa; --fg:#e8f2fa; --muted:#9db3c3;
+    --shadow:0 18px 44px rgba(0,0,0,.45); color-scheme:dark;
+  }
+
+  *{box-sizing:border-box}
+  body{margin:0;font-family:var(--ff-b);color:var(--fg);background:var(--bg);line-height:1.62;-webkit-font-smoothing:antialiased}
+  h1,h2,h3,h4{font-family:var(--ff-d);color:var(--ink);line-height:1.15;margin:0;text-wrap:balance}
+  p{margin:0}
+  a{color:inherit}
+  .wrap{max-width:1080px;margin:0 auto;padding-left:max(18px,env(safe-area-inset-left,0px));padding-right:max(18px,env(safe-area-inset-right,0px))}
+  .band{padding-block:62px}
+  .eyebrow{display:inline-block;font-family:var(--ff-d);font-weight:700;font-size:12px;letter-spacing:.14em;text-transform:uppercase;padding:7px 14px;border-radius:999px}
+  .lead{font-size:17px;color:var(--muted);max-width:60ch}
+
+  /* top brand bar */
+  .topbar{background:var(--navy);color:#fff}
+  .topbar .wrap{display:flex;align-items:center;justify-content:space-between;gap:14px;padding-block:16px;flex-wrap:wrap}
+  .logo{display:flex;align-items:center;gap:12px}
+  .logo .mark{width:44px;height:44px;border-radius:11px;background:linear-gradient(135deg,var(--sky),var(--sky2));display:grid;place-items:center;flex:none;box-shadow:0 8px 20px rgba(27,143,209,.45)}
+  .logo .mark svg{width:26px;height:26px;stroke:#fff;fill:none;stroke-width:1.9}
+  .logo b{font-family:var(--ff-d);font-weight:700;font-size:19px;color:#fff;display:block;letter-spacing:.2px}
+  .logo span{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--amber2)}
+  .topbar .reach{font-size:13.5px;color:rgba(255,255,255,.82);text-align:right}
+  .topbar .reach b{color:#fff}
+
+  /* hero */
+  .hero{position:relative;overflow:hidden;background:
+      radial-gradient(70% 90% at 88% 6%,rgba(54,178,232,.40),transparent 60%),
+      radial-gradient(60% 80% at 4% 100%,rgba(73,197,140,.30),transparent 60%),
+      linear-gradient(135deg,var(--navy) 0%,var(--navy2) 60%,#15486f 100%);
+    color:#fff}
+  .hero .wrap{padding-block:72px 78px;position:relative;z-index:2}
+  .hero .eyebrow{background:rgba(255,255,255,.14);color:#eaf6ff;border:1px solid rgba(255,255,255,.25)}
+  .hero h1{color:#fff;font-size:clamp(31px,5vw,52px);font-weight:800;max-width:17ch;margin:20px 0 0}
+  .hero h1 .hl{background:linear-gradient(120deg,var(--amber2),#ffd79a);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .hero p{color:rgba(255,255,255,.88);font-size:19px;max-width:58ch;margin:20px 0 0;font-weight:400}
+  .pills{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
+  .pill{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.22);padding:9px 15px;border-radius:999px;font-size:13.5px;font-weight:600;color:#fff}
+  .pill .d{width:9px;height:9px;border-radius:50%;flex:none}
+  .stats{display:flex;flex-wrap:wrap;gap:30px 48px;margin-top:40px;padding-top:28px;border-top:1px solid rgba(255,255,255,.16)}
+  .stats div span{display:block;font-size:13px;color:rgba(255,255,255,.72)}
+  .stats div b{font-family:var(--ff-d);font-weight:700;font-size:26px;color:#fff}
+
+  .sechead .eyebrow{background:var(--soft);color:var(--sky);border:1px solid var(--line)}
+  .sechead h2{font-size:clamp(25px,3.4vw,36px);font-weight:700;margin:14px 0 10px;max-width:22ch}
+  .sechead p{max-width:62ch}
+
+  /* services grid */
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:38px}
+  @media(max-width:860px){.grid{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:560px){.grid{grid-template-columns:1fr}}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:24px 22px;box-shadow:var(--shadow);min-width:0}
+  .card .ic{width:50px;height:50px;border-radius:13px;display:grid;place-items:center;margin-bottom:15px}
+  .card .ic svg{width:25px;height:25px;stroke:#fff;fill:none;stroke-width:1.85}
+  .card h3{font-size:18px;font-weight:600;margin-bottom:6px}
+  .card p{font-size:14.5px;color:var(--muted)}
+  .c-sky{background:linear-gradient(135deg,var(--sky),var(--sky2))}
+  .c-green{background:linear-gradient(135deg,var(--green),var(--green2))}
+  .c-amber{background:linear-gradient(135deg,var(--amber),var(--amber2))}
+  .c-navy{background:linear-gradient(135deg,var(--navy),var(--navy2))}
+  .c-rose{background:linear-gradient(135deg,var(--rose),#f08a84)}
+
+  /* pillars (comfort / protection / care) */
+  .pillars{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:38px}
+  @media(max-width:760px){.pillars{grid-template-columns:1fr}}
+  .pillar{position:relative;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:26px 24px;box-shadow:var(--shadow);overflow:hidden}
+  .pillar::before{content:"";position:absolute;left:0;top:0;bottom:0;width:6px}
+  .pillar.p1::before{background:linear-gradient(var(--sky),var(--sky2))}
+  .pillar.p2::before{background:linear-gradient(var(--green),var(--green2))}
+  .pillar.p3::before{background:linear-gradient(var(--amber),var(--amber2))}
+  .pillar .tag{font-family:var(--ff-d);font-weight:700;font-size:12px;letter-spacing:.12em;text-transform:uppercase}
+  .pillar.p1 .tag{color:var(--sky)} .pillar.p2 .tag{color:var(--green)} .pillar.p3 .tag{color:var(--amber)}
+  .pillar h3{font-size:21px;font-weight:700;margin:6px 0 10px}
+  .pillar ul{list-style:none;margin:0;padding:0}
+  .pillar li{display:flex;gap:10px;align-items:flex-start;font-size:14.5px;color:var(--muted);margin:9px 0}
+  .pillar li svg{width:18px;height:18px;flex:none;margin-top:3px;stroke-width:2.4;fill:none}
+  .pillar.p1 li svg{stroke:var(--sky)} .pillar.p2 li svg{stroke:var(--green)} .pillar.p3 li svg{stroke:var(--amber)}
+
+  /* mediroute band */
+  .mr{background:
+      radial-gradient(60% 100% at 100% 0,rgba(73,197,140,.22),transparent 55%),
+      linear-gradient(135deg,#0c2b45,#14466c)}
+  .mr .wrap{color:#fff}
+  .mr .eyebrow{background:rgba(73,197,140,.22);color:#c7f4dd;border:1px solid rgba(73,197,140,.4)}
+  .mr h2{color:#fff}
+  .mr .sub{color:rgba(255,255,255,.85);max-width:62ch;margin-top:10px}
+  .mrgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:34px}
+  @media(max-width:860px){.mrgrid{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:560px){.mrgrid{grid-template-columns:1fr}}
+  .mritem{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.16);border-radius:15px;padding:20px 18px;min-width:0}
+  .mritem .t{display:flex;align-items:center;gap:10px;font-family:var(--ff-d);font-weight:600;font-size:15.5px;color:#fff}
+  .mritem .t svg{width:21px;height:21px;stroke:var(--green2);fill:none;stroke-width:1.9;flex:none}
+  .mritem p{font-size:14px;color:rgba(255,255,255,.8);margin-top:9px}
+
+  /* payment */
+  .pay{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:38px}
+  @media(max-width:760px){.pay{grid-template-columns:1fr}}
+  .paycard{border-radius:18px;padding:26px 24px;border:1px solid var(--line);background:var(--card);box-shadow:var(--shadow)}
+  .paycard .ic{width:48px;height:48px;border-radius:12px;display:grid;place-items:center;margin-bottom:14px}
+  .paycard .ic svg{width:24px;height:24px;stroke:#fff;fill:none;stroke-width:1.9}
+  .paycard h3{font-size:19px;font-weight:700;margin-bottom:6px}
+  .paycard p{font-size:14.5px;color:var(--muted)}
+  .rates{margin-top:16px;background:var(--soft);border:1px dashed var(--line);border-radius:14px;padding:16px 18px}
+  .rates .r{display:flex;justify-content:space-between;gap:12px;font-size:14.5px;padding:5px 0}
+  .rates .r b{font-family:var(--ff-d);font-weight:600;color:var(--ink)}
+  .rates .r span{color:var(--muted)}
+  .rates .fine{font-size:12.5px;color:var(--muted);margin-top:8px}
+
+  /* why / benefits */
+  .benefits{display:grid;grid-template-columns:repeat(2,1fr);gap:14px 26px;margin-top:34px}
+  @media(max-width:620px){.benefits{grid-template-columns:1fr}}
+  .ben{display:flex;gap:13px;align-items:flex-start}
+  .ben .chk{width:28px;height:28px;border-radius:9px;background:linear-gradient(135deg,var(--green),var(--green2));display:grid;place-items:center;flex:none}
+  .ben .chk svg{width:16px;height:16px;stroke:#fff;fill:none;stroke-width:3}
+  .ben h4{font-size:15.5px;font-weight:600;margin:0 0 2px}
+  .ben p{font-size:14px;color:var(--muted)}
+
+  /* cta */
+  .cta{background:
+      radial-gradient(60% 120% at 10% 0,rgba(54,178,232,.4),transparent 55%),
+      linear-gradient(135deg,var(--amber),#f0b457)}
+  .cta .wrap{text-align:center;color:#3a2504}
+  .cta h2{color:#2a1a02;font-size:clamp(25px,3.4vw,36px)}
+  .cta p{color:#5a3f16;max-width:52ch;margin:12px auto 0;font-weight:500}
+  .contacts{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-top:26px}
+  .contact{background:rgba(255,255,255,.92);border:1px solid rgba(255,255,255,.7);border-radius:14px;padding:14px 20px;min-width:220px;text-align:left}
+  .contact .k{font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:#8a6a2a;font-weight:700}
+  .contact .v{font-family:var(--ff-d);font-weight:600;font-size:16px;color:#2a1a02;margin-top:3px;word-break:break-word}
+  .contact a{text-decoration:none}
+  .btnrow{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:24px}
+  .btn{display:inline-flex;align-items:center;gap:9px;font-family:var(--ff-d);font-weight:600;font-size:15px;border-radius:12px;padding:14px 26px;text-decoration:none;border:0;cursor:pointer}
+  .btn-navy{background:var(--navy);color:#fff}
+  .btn-ghost{background:rgba(255,255,255,.85);color:var(--navy);border:1.5px solid rgba(42,26,2,.25)}
+  .copymsg{font-size:13px;color:#3a2504;min-height:18px;margin-top:10px;font-weight:600}
+
+  footer{background:var(--navy);color:rgba(255,255,255,.72);padding-block:30px;font-size:13.5px}
+  footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
+  footer b{color:#fff;font-family:var(--ff-d)}
+  .disc{font-size:11.5px;color:rgba(255,255,255,.45);margin-top:10px;max-width:70ch}
+  @media(prefers-reduced-motion:no-preference){.card,.pillar,.mritem{transition:transform .18s ease,box-shadow .18s ease}.card:hover,.pillar:hover{transform:translateY(-3px)}}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="wrap">
+    <div class="logo">
+      <div class="mark"><svg viewBox="0 0 24 24"><path d="M3 13l2-5a2 2 0 0 1 1.9-1.4h8.2A2 2 0 0 1 17 8l2 5"/><path d="M3 13h18v4a1 1 0 0 1-1 1h-1"/><path d="M5 18H4a1 1 0 0 1-1-1v-4"/><circle cx="7.5" cy="18" r="1.7"/><circle cx="16.5" cy="18" r="1.7"/><path d="M11 9.5h3"/></svg></div>
+      <div><b>GIMO Consulting Services</b><span>Non‑Emergency Medical Transportation</span></div>
+    </div>
+    <div class="reach">Partnerships · <b>(612) 483‑1250</b> · <b>(281) 935‑9597</b><br>info@gimocons.com · gimocons.com</div>
+  </div>
+</div>
+
+<header class="hero">
+  <div class="wrap">
+    <span class="eyebrow">A transportation partnership for home‑health facilities</span>
+    <h1>Comfort, protection, and care — <span class="hl">every mile</span> your residents travel.</h1>
+    <p>GIMO Consulting Services moves your residents safely to dialysis, appointments, discharges, and day programs — door‑to‑door, on time, with trained and compassionate drivers. Let us be the transportation arm of your facility, so your staff can stay focused on care.</p>
+    <div class="pills">
+      <span class="pill"><span class="d" style="background:var(--sky2)"></span>Ambulatory · Wheelchair · Stretcher</span>
+      <span class="pill"><span class="d" style="background:var(--green2)"></span>Powered by MediRoutes</span>
+      <span class="pill"><span class="d" style="background:var(--amber2)"></span>Simple Cash &amp; ACH billing</span>
+    </div>
+    <div class="stats">
+      <div><b>Door‑to‑door</b><span>& door‑through‑door assistance</span></div>
+      <div><b>On‑time</b><span>live‑tracked, dispatched rides</span></div>
+      <div><b>Insured</b><span>vetted, background‑checked drivers</span></div>
+    </div>
+  </div>
+</header>
+
+<section class="band">
+  <div class="wrap">
+    <div class="sechead">
+      <span class="eyebrow">What we handle for your residents</span>
+      <h2>Reliable transportation for every kind of trip</h2>
+      <p class="lead">One partner for the recurring rides that fill your schedule and the one‑off trips that can't wait — booked, tracked, and documented.</p>
+    </div>
+    <div class="grid">
+      <div class="card"><div class="ic c-sky"><svg viewBox="0 0 24 24"><path d="M8 3h8l1 4H7z"/><path d="M6 7h12v12a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2z"/><path d="M12 11v5M9.5 13.5h5"/></svg></div><h3>Medical appointments</h3><p>Routine and specialist visits, follow‑ups, imaging and lab work — with waiting‑and‑return available.</p></div>
+      <div class="card"><div class="ic c-green"><svg viewBox="0 0 24 24"><path d="M12 21s-7-4.5-7-10a7 7 0 0 1 14 0c0 5.5-7 10-7 10z"/><path d="M9 11h6M12 8v6"/></svg></div><h3>Dialysis &amp; recurring care</h3><p>Standing‑order transport for dialysis, infusion, therapy and wound care — set the schedule once.</p></div>
+      <div class="card"><div class="ic c-amber"><svg viewBox="0 0 24 24"><path d="M3 10.5 12 4l9 6.5"/><path d="M5 9.5V20h14V9.5"/><path d="M9 20v-5h6v5"/></svg></div><h3>Discharge &amp; admissions</h3><p>Safe hospital‑to‑facility and facility‑to‑home transfers, coordinated with your care team.</p></div>
+      <div class="card"><div class="ic c-navy"><svg viewBox="0 0 24 24"><circle cx="8" cy="7" r="2.3"/><path d="M8 9.3V15h3l2 4"/><circle cx="17" cy="18" r="4"/><path d="M17 15v3l2 1"/></svg></div><h3>Wheelchair transport</h3><p>Lift‑equipped vehicles with properly secured mobility devices and trained hands‑on assistance.</p></div>
+      <div class="card"><div class="ic c-rose"><svg viewBox="0 0 24 24"><rect x="3" y="9" width="18" height="7" rx="2"/><path d="M3 12h18M6 16v2M18 16v2"/></svg></div><h3>Stretcher &amp; bariatric</h3><p>Comfortable stretcher transport for non‑emergency riders who can't travel seated.</p></div>
+      <div class="card"><div class="ic c-sky"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div><h3>Day programs &amp; errands</h3><p>Adult day programs, pharmacy pickups and essential errands — keeping residents connected.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="band mr">
+  <div class="wrap">
+    <div class="sechead">
+      <span class="eyebrow">The MediRoutes advantage</span>
+      <h2>Technology that makes transport dependable — and visible to your staff</h2>
+      <p class="sub">Our scheduling and dispatch run on <b>MediRoutes</b>, the purpose‑built NEMT platform. That partnership turns transportation from phone‑tag and guesswork into a service your team can see, trust, and account for.</p>
+    </div>
+    <div class="mrgrid">
+      <div class="mritem"><div class="t"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4M8 13h3"/></svg>Smart scheduling</div><p>Route‑optimized trips and standing orders mean on‑time pickups and no double‑booked dialysis runs.</p></div>
+      <div class="mritem"><div class="t"><svg viewBox="0 0 24 24"><path d="M12 21s-7-5-7-11a7 7 0 0 1 14 0c0 6-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>Live GPS tracking</div><p>Your staff and families can see where the ride is and the real ETA — fewer "where are they?" calls.</p></div>
+      <div class="mritem"><div class="t"><svg viewBox="0 0 24 24"><path d="M4 12a8 8 0 0 1 8-8 8 8 0 0 1 6 2.7L20 4M20 12a8 8 0 0 1-8 8 8 8 0 0 1-6-2.7L4 20"/></svg>Automated dispatch</div><p>Confirmations and reminders go out automatically, cutting missed trips and last‑minute scrambles.</p></div>
+      <div class="mritem"><div class="t"><svg viewBox="0 0 24 24"><path d="M6 2h9l5 5v15a0 0 0 0 1 0 0H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z"/><path d="M14 2v5h5M8 13h8M8 17h5"/></svg>Digital trip records</div><p>Every trip is logged with times and signatures — clean documentation for your files and audits.</p></div>
+      <div class="mritem"><div class="t"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="14" height="16" rx="2"/><path d="M7 8h6M7 12h6M7 16h4M21 8v8"/></svg>Facility booking portal</div><p>Request, change, and track every resident's ride from one place — no more scattered phone calls.</p></div>
+      <div class="mritem"><div class="t"><svg viewBox="0 0 24 24"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z"/><path d="M9 12l2 2 4-4"/></svg>Accountability built in</div><p>Timestamps, driver details, and route history on every trip — reliability you can verify, not just promise.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="band" style="background:var(--soft)">
+  <div class="wrap">
+    <div class="sechead">
+      <span class="eyebrow">Our promise to your residents</span>
+      <h2>Comfort, protection &amp; care — the three things we never compromise</h2>
+      <p class="lead">These are our standards on every ride. Your residents are treated with the same dignity and patience your own team gives them.</p>
+    </div>
+    <div class="pillars">
+      <div class="pillar p1">
+        <div class="tag">Comfort</div>
+        <h3>A calm, easy ride</h3>
+        <ul>
+          <li><svg viewBox="0 0 24 24"><path d="M5 12l4 4L19 7"/></svg>Clean, climate‑controlled vehicles</li>
+          <li><svg viewBox="0 0 24 24"><path d="M5 12l4 4L19 7"/></svg>Patient, courteous, unhurried drivers</li>
+          <li><svg viewBox="0 0 24 24"><path d="M5 12l4 4L19 7"/></svg>Help from the door, not just the curb</li>
+          <li><svg viewBox="0 0 24 24"><path d="M5 12l4 4L19 7"/></svg>Companion / family seating welcome</li>
+        </ul>
+      </div>
+      <div class="pillar p2">
+        <div class="tag">Protection</div>
+        <h3>Safety on every mile</h3>
+        <ul>
+          <li><svg viewBox="0 0 24 24"><path d="M5 12l4 4L19 7"/></svg>Background‑checked, drug‑screened drivers</li>
+          <li><svg viewBox="0 0 24 24"><path d="M5 12l4 4L19 7"/></svg>Fully insured, inspected vehicles</li>
+          <li><svg viewBox="0 0 24 24"><path d="M5 12l4 4L19 7"/></svg>Properly secured wheelchairs &amp; stretchers</li>
+          <li><svg viewBox="0 0 24 24"><path d="M5 12l4 4L19 7"/></svg>Sanitized between riders · PHI kept private</li>
+        </ul>
+      </div>
+      <div class="pillar p3">
+        <div class="tag">Care</div>
+        <h3>Dignity, start to finish</h3>
+        <ul>
+          <li><svg viewBox="0 0 24 24"><path d="M5 12l4 4L19 7"/></svg>Door‑through‑door assistance</li>
+          <li><svg viewBox="0 0 24 24"><path d="M5 12l4 4L19 7"/></svg>Trained in sensitivity &amp; mobility support</li>
+          <li><svg viewBox="0 0 24 24"><path d="M5 12l4 4L19 7"/></svg>Clear communication with your staff</li>
+          <li><svg viewBox="0 0 24 24"><path d="M5 12l4 4L19 7"/></svg>Every resident treated like family</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="band">
+  <div class="wrap">
+    <div class="sechead">
+      <span class="eyebrow">Simple billing — no card fees</span>
+      <h2>Flexible payment that works for a facility: Cash or ACH</h2>
+      <p class="lead">We keep billing clean and predictable so there are no surprises for your accounts team — and no processing fees eating into your budget.</p>
+    </div>
+    <div class="pay">
+      <div class="paycard">
+        <div class="ic c-green"><svg viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.6"/><path d="M6 10v4M18 10v4"/></svg></div>
+        <h3>Cash</h3>
+        <p>Pay per trip or on a simple statement. Straightforward for one‑off rides, private‑pay residents, and families settling directly — a clear receipt every time.</p>
+      </div>
+      <div class="paycard">
+        <div class="ic c-sky"><svg viewBox="0 0 24 24"><path d="M3 10.5 12 4l9 6.5"/><path d="M5 10v8h14v-8"/><path d="M9 18v-4h6v4"/><path d="M9.5 21h5"/></svg></div>
+        <h3>ACH bank transfer</h3>
+        <p>Set up direct bank payment for recurring volume. Itemized invoices on your billing cycle, auto‑debit optional — no credit‑card surcharges, no paperwork chase.</p>
+      </div>
+    </div>
+    <div class="rates">
+      <div class="r"><span>Per‑mile rate (round trips counted both ways)</span><b>$3.50 / mile</b></div>
+      <div class="r"><span>Wheelchair handling (per trip)</span><b>+ $75</b></div>
+      <div class="r"><span>Stretcher handling (per trip)</span><b>+ $45</b></div>
+      <div class="r"><span>Ambulatory (seated) surcharge</span><b>None</b></div>
+      <p class="fine">Transparent, mileage‑based pricing — no base‑fare padding. Facility contract rates and volume terms available for recurring schedules; quoted in writing before any trip.</p>
+    </div>
+  </div>
+</section>
+
+<section class="band" style="background:var(--soft)">
+  <div class="wrap">
+    <div class="sechead">
+      <span class="eyebrow">Why facilities choose GIMO</span>
+      <h2>A partnership that lightens your team's load</h2>
+    </div>
+    <div class="benefits">
+      <div class="ben"><div class="chk"><svg viewBox="0 0 24 24"><path d="M5 12l4 4L19 7"/></svg></div><div><h4>Fewer missed appointments</h4><p>Scheduled, confirmed, tracked rides mean fewer no‑shows and rescheduled dialysis runs.</p></div></div>
+      <div class="ben"><div class="chk"><svg viewBox="0 0 24 24"><path d="M5 12l4 4L19 7"/></svg></div><div><h4>Hours back for your staff</h4><p>Hand off booking and coordination — your nurses and aides stay with the residents.</p></div></div>
+      <div class="ben"><div class="chk"><svg viewBox="0 0 24 24"><path d="M5 12l4 4L19 7"/></svg></div><div><h4>One accountable partner</h4><p>A single point of contact for every resident, every trip — not a rotating cast of drivers.</p></div></div>
+      <div class="ben"><div class="chk"><svg viewBox="0 0 24 24"><path d="M5 12l4 4L19 7"/></svg></div><div><h4>Documentation you can rely on</h4><p>Trip logs, times and signatures captured digitally for your records and compliance.</p></div></div>
+      <div class="ben"><div class="chk"><svg viewBox="0 0 24 24"><path d="M5 12l4 4L19 7"/></svg></div><div><h4>Flexible, fee‑free billing</h4><p>Cash or ACH, per‑trip or monthly — predictable costs with no card‑processing fees.</p></div></div>
+      <div class="ben"><div class="chk"><svg viewBox="0 0 24 24"><path d="M5 12l4 4L19 7"/></svg></div><div><h4>Built for recurring volume</h4><p>Standing orders for dialysis, therapy and day programs — set once, run reliably.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="band cta">
+  <div class="wrap">
+    <h2>Let's set up dependable transportation for your residents.</h2>
+    <p>Tell us your facility's typical trips and we'll put a partnership plan and contract rates in writing — usually within one business day.</p>
+    <div class="contacts">
+      <div class="contact"><div class="k">Call / Text</div><div class="v"><a href="tel:+16124831250">(612) 483‑1250</a> · <a href="tel:+12819359597">(281) 935‑9597</a></div></div>
+      <div class="contact"><div class="k">Email</div><div class="v"><a href="mailto:info@gimocons.com">info@gimocons.com</a></div></div>
+      <div class="contact"><div class="k">Office</div><div class="v">8707 Timber Knoll Dr<br>Missouri City, TX 77459</div></div>
+    </div>
+    <div class="btnrow">
+      <a class="btn btn-navy" href="mailto:info@gimocons.com?subject=Facility%20transportation%20partnership&amp;body=Hello%20GIMO%2C%20we%27d%20like%20to%20discuss%20transportation%20for%20our%20residents.">Start a partnership →</a>
+      <button class="btn btn-ghost" id="copyBtn" type="button">Copy our contact details</button>
+    </div>
+    <div class="copymsg" id="copyMsg"></div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div><b>GIMO Consulting Services</b> — Non‑Emergency Medical Transportation · gimocons.com</div>
+    <div>Comfort · Protection · Care</div>
+  </div>
+  <div class="wrap"><p class="disc">GIMO Consulting Services provides non‑emergency medical transportation only and is not an ambulance or emergency service. In a medical emergency, call 911. Pricing shown is standard and subject to a written quote; facility contract rates available. “MediRoutes” is the NEMT scheduling and dispatch platform GIMO uses to coordinate and track trips.</p></div>
+</footer>
+
+<script>
+(function(){
+  var btn=document.getElementById('copyBtn'), msg=document.getElementById('copyMsg');
+  if(!btn) return;
+  var details="GIMO Consulting Services — Non-Emergency Medical Transportation\nPhone/Text: (612) 483-1250 · (281) 935-9597\nEmail: info@gimocons.com\nOffice: 8707 Timber Knoll Dr, Missouri City, TX 77459\nWeb: gimocons.com";
+  btn.addEventListener('click',function(){
+    function done(){ msg.textContent='Contact details copied — paste them anywhere.'; }
+    try{
+      navigator.clipboard.writeText(details).then(done).catch(select);
+    }catch(e){ select(); }
+    function select(){
+      try{
+        var ta=document.createElement('textarea'); ta.value=details;
+        ta.style.position='fixed'; ta.style.opacity='0'; document.body.appendChild(ta);
+        ta.select(); document.execCommand('copy'); document.body.removeChild(ta); done();
+      }catch(err){ msg.textContent='Copy not available — our details are listed above.'; }
+    }
+  });
+})();
+</script>
+</body>
+</html>
