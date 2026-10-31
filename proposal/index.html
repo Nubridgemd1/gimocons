@@ -236,10 +236,19 @@
   </div>
 </div>
 
+<style>
+  .preparedFor{display:inline-flex;align-items:center;gap:9px;background:rgba(246,192,105,.16);border:1px solid rgba(246,192,105,.5);color:#ffe9c2;font-family:'Jost',sans-serif;font-weight:600;font-size:13.5px;letter-spacing:.02em;padding:8px 16px;border-radius:999px;margin-bottom:18px}
+  .preparedFor b{color:#fff;font-weight:700}
+  .preparedFor[hidden]{display:none}
+  .clientNote{color:#fff;font-size:18px;line-height:1.55;font-style:italic;border-left:3px solid var(--amber2);padding-left:16px;margin:4px 0 2px;max-width:60ch}
+  .clientNote[hidden]{display:none}
+</style>
 <header class="hero">
   <div class="wrap">
+    <div class="preparedFor" id="preparedFor" hidden></div>
     <span class="eyebrow">A transportation partnership for home‑health facilities</span>
     <h1>Comfort, protection, and care — <span class="hl">every mile</span> your residents travel.</h1>
+    <p id="clientNote" class="clientNote" hidden></p>
     <p>GIMO Consulting Services moves your residents safely to dialysis, appointments, discharges, and day programs — door‑to‑door, on time, with trained and compassionate drivers. Let us be the transportation arm of your facility, so your staff can stay focused on care.</p>
     <div class="pills">
       <span class="pill"><span class="d" style="background:var(--sky2)"></span>Ambulatory · Wheelchair · Stretcher</span>
@@ -405,10 +414,21 @@
 
 <script>
 (function(){
-  var URL_='https://gimocons.com/proposal/';
-  var PDF_URL=URL_+'GIMO-Facility-Partnership.pdf';
-  var TITLE='GIMO Consulting Services — Facility Transportation Partnership';
-  var TEXT='GIMO Consulting Services — safe, door-to-door medical transportation for your residents. See our partnership proposal:';
+  /* Personalize for the client this proposal is being sent to (?to=Facility&contact=Name&note=...&from=...) */
+  var qs = new URLSearchParams(location.search);
+  var toName=(qs.get('to')||'').trim(), contact=(qs.get('contact')||'').trim(), cnote=(qs.get('note')||'').trim();
+  if(toName){
+    var pf=document.getElementById('preparedFor');
+    if(pf){ pf.textContent='Prepared for '; var b=document.createElement('b'); b.textContent=toName; pf.appendChild(b); pf.hidden=false; }
+    try{ document.title='GIMO Proposal — '+toName; }catch(e){}
+  }
+  if(cnote){ var cn=document.getElementById('clientNote'); if(cn){ cn.textContent=cnote; cn.hidden=false; } }
+
+  var base = location.origin + location.pathname;
+  var URL_ = base + (location.search || '');                       // the personalized link gets shared
+  var PDF_URL = base.replace(/[^/]*$/, '') + 'GIMO-Facility-Partnership.pdf';
+  var TITLE = toName ? ('GIMO — Transportation Proposal for ' + toName) : 'GIMO Consulting Services — Facility Transportation Partnership';
+  var TEXT = (toName ? ((contact ? 'Hi ' + contact + ' — ' : '') + 'GIMO Consulting Services: safe, door-to-door medical transportation for the residents of ' + toName + '. See our partnership proposal:') : 'GIMO Consulting Services — safe, door-to-door medical transportation for your residents. See our partnership proposal:');
   var full=TEXT+' '+URL_;
   var sm=document.getElementById('shMsg');
   function note(t){ if(sm){ sm.textContent=t; setTimeout(function(){sm.textContent='';},4500);} }

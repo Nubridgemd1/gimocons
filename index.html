@@ -536,7 +536,7 @@ function openAdmin(){var ok=LS.get('gimo_admin_ok',false);
 function closeAdmin(){document.getElementById('admin').classList.remove('open');document.body.style.overflow='';}
 function adminLogin(){var u=(document.getElementById('auser').value||'').trim(),p=document.getElementById('apass').value;if(u===creds.user&&p===creds.pass){LS.set('gimo_admin_ok',true);adminHome();toast('Welcome back');}else toast('Incorrect username or password');}
 function adminLogout(){LS.set('gimo_admin_ok',false);closeAdmin();toast('Signed out');}
-function adminHome(){document.getElementById('adminContent').innerHTML='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px"><h2 style="font-size:22px">Admin console</h2><button class="btn ghost sm" onclick="adminLogout()">Sign out</button></div><div class="adtabs"><button class="on" onclick="adTab(this,0)">Contact info</button><button onclick="adTab(this,1)">Photos</button><button onclick="adTab(this,2)">Requests ('+bookings.length+')</button><button onclick="adTab(this,3)">Pricing</button><button onclick="adTab(this,4)">Homepage</button><button onclick="adTab(this,5)">MediRoutes</button><button onclick="adTab(this,6)">Security</button></div><div class="adpane on" id="ap0">'+contactPane()+'</div><div class="adpane" id="ap1">'+photosPane()+'</div><div class="adpane" id="ap2">'+bkPane()+'</div><div class="adpane" id="ap3">'+pricePane()+'</div><div class="adpane" id="ap4">'+homePane()+'</div><div class="adpane" id="ap5">'+medirPane()+'</div><div class="adpane" id="ap6">'+securityPane()+'</div>';}
+function adminHome(){document.getElementById('adminContent').innerHTML='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px"><h2 style="font-size:22px">Admin console</h2><button class="btn ghost sm" onclick="adminLogout()">Sign out</button></div><div class="adtabs"><button class="on" onclick="adTab(this,0)">Contact info</button><button onclick="adTab(this,1)">Photos</button><button onclick="adTab(this,2)">Requests ('+bookings.length+')</button><button onclick="adTab(this,3)">Pricing</button><button onclick="adTab(this,4)">Homepage</button><button onclick="adTab(this,5)">MediRoutes</button><button onclick="adTab(this,6)">Proposal</button><button onclick="adTab(this,7)">Security</button></div><div class="adpane on" id="ap0">'+contactPane()+'</div><div class="adpane" id="ap1">'+photosPane()+'</div><div class="adpane" id="ap2">'+bkPane()+'</div><div class="adpane" id="ap3">'+pricePane()+'</div><div class="adpane" id="ap4">'+homePane()+'</div><div class="adpane" id="ap5">'+medirPane()+'</div><div class="adpane" id="ap6">'+proposalPane()+'</div><div class="adpane" id="ap7">'+securityPane()+'</div>';}
 function photoRow(slot,label,defId){return '<div style="display:flex;gap:10px;align-items:center;margin-bottom:8px"><img src="'+(photoOverrides[slot]||IMG(defId,120))+'" style="width:52px;height:52px;object-fit:cover;border-radius:8px;border:1px solid var(--line);flex:none"><div style="flex:1;min-width:0"><div style="font-size:11.5px;font-weight:600;font-family:var(--hd);color:var(--grey);margin-bottom:3px">'+label+'</div><input id="ph_'+slot+'" placeholder="Paste image URL" value="'+esc(photoOverrides[slot]||'')+'" style="font-size:13px;padding:8px"></div><label class="btn ghost sm" style="cursor:pointer;flex:none">Upload<input type="file" accept="image/*" style="display:none" onchange="uploadPhoto(\''+slot+'\',this)"></label>'+(photoOverrides[slot]?'<button class="btn ghost sm" title="Reset" style="flex:none" onclick="resetPhoto(\''+slot+'\')">↺</button>':'')+'</div>';}
 function photosPane(){var h='<p style="color:var(--grey);font-size:13.5px;margin:0 0 14px">Replace any photo — paste an image URL or upload from your device. Changes save on this device and update the site instantly.</p>';
   h+='<h4 style="font-size:13px;color:var(--sky-d);margin:6px 0 8px">Hero</h4>'+photoRow('hero','Homepage hero',PIX.hero);
@@ -579,6 +579,50 @@ function medirPane(){
     +'<p style="font-size:12px;color:var(--grey-l);margin:10px 0 0">Until this is switched on, bookings are delivered to you exactly as now (email &amp; text). No rider card details are ever sent.</p>';
 }
 function openMediroutes(){var u=(mediroutes.url||DEFAULT_MEDIR.url).trim();if(!/^https?:\/\//i.test(u))u='https://'+u;window.open(u,'_blank','noopener');}
+
+/* ---- Facility proposal: personalize for a client + share by email/text/social ---- */
+function proposalBase(){try{return new URL('proposal/',location.href.split('#')[0]).href;}catch(e){return 'https://gimocons.com/proposal/';}}
+function proposalPane(){
+  var p=LS.get('gimo_proposal',{});
+  return '<div style="display:flex;align-items:center;gap:11px;margin-bottom:6px">'
+    +'<div style="width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,var(--sky),var(--sky-d));display:flex;align-items:center;justify-content:center;flex:none"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#fff" stroke-width="1.9"><path d="M6 2h9l5 5v15H6z"/><path d="M14 2v5h5M9 13h6M9 17h4"/></svg></div>'
+    +'<div><h4 style="font-size:16px;margin:0">Facility proposal</h4><p style="color:var(--grey);font-size:13px;margin:0">Personalize our services proposal &amp; share it</p></div></div>'
+    +'<p style="color:var(--grey);font-size:13.5px;margin:10px 0 14px">Enter the facility you’re proposing to, then share by email, text, WhatsApp or social. The recipient opens a proposal addressed to them (with a Download PDF + share buttons on the page too).</p>'
+    +'<div class="fgrid"><div class="field"><label>Facility / client name</label><input id="pr_to" value="'+esc(p.to||'')+'" placeholder="e.g. Riverside Care Center"></div>'
+    +'<div class="field"><label>Contact person (optional)</label><input id="pr_contact" value="'+esc(p.contact||'')+'" placeholder="e.g. Ms. Johnson"></div></div>'
+    +'<div class="field"><label>Personal note (optional) <span style="color:var(--grey-l);font-weight:400">— shown at the top of the proposal</span></label><textarea id="pr_note" placeholder="e.g. Following up on our call — here’s how we can support your residents’ transportation.">'+esc(p.note||'')+'</textarea></div>'
+    +'<div style="display:flex;gap:10px;margin-top:14px;flex-wrap:wrap"><button class="btn pri" onclick="proposalBuild()">Build shareable proposal</button><a class="btn ghost" id="pr_open" href="'+esc(proposalBase())+'" target="_blank" rel="noopener">Preview</a></div>'
+    +'<div id="pr_out" style="margin-top:18px"></div>';
+}
+function proposalLink(){
+  var to=((document.getElementById('pr_to')||{}).value||'').trim();
+  var contact=((document.getElementById('pr_contact')||{}).value||'').trim();
+  var note=((document.getElementById('pr_note')||{}).value||'').trim();
+  var qs=[]; if(to)qs.push('to='+encodeURIComponent(to)); if(contact)qs.push('contact='+encodeURIComponent(contact)); if(note)qs.push('note='+encodeURIComponent(note));
+  return {url:proposalBase()+(qs.length?('?'+qs.join('&')):''),to:to,contact:contact,note:note};
+}
+function proposalBuild(){
+  var L=proposalLink(); LS.set('gimo_proposal',{to:L.to,contact:L.contact,note:L.note});
+  var url=L.url, e=encodeURIComponent;
+  var title='GIMO — Transportation Proposal'+(L.to?(' for '+L.to):'');
+  var text=L.to?((L.contact?('Hi '+L.contact+' — '):'')+'GIMO Consulting Services: safe, door-to-door medical transportation for the residents of '+L.to+'. See our proposal:'):'GIMO Consulting Services — medical transportation proposal:';
+  var full=e(text+' '+url);
+  var op=document.getElementById('pr_open'); if(op)op.href=url;
+  var out=document.getElementById('pr_out');
+  out.innerHTML='<div class="field"><label>Shareable link</label><input id="pr_link" readonly value="'+esc(url)+'" onclick="this.select()"></div>'
+    +'<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">'
+    +'<button class="btn ghost sm" onclick="proposalCopy()">🔗 Copy link</button>'
+    +'<a class="btn ghost sm" target="_blank" rel="noopener" href="mailto:?subject='+e(title)+'&body='+e(text+'\n\n'+url)+'">✉️ Email</a>'
+    +'<a class="btn ghost sm" href="sms:?&body='+full+'">📱 Text</a>'
+    +'<a class="btn ghost sm" target="_blank" rel="noopener" href="https://wa.me/?text='+full+'">WhatsApp</a>'
+    +'<a class="btn ghost sm" target="_blank" rel="noopener" href="https://www.facebook.com/sharer/sharer.php?u='+e(url)+'">Facebook</a>'
+    +'<a class="btn ghost sm" target="_blank" rel="noopener" href="https://twitter.com/intent/tweet?text='+e(text)+'&url='+e(url)+'">X</a>'
+    +'<a class="btn ghost sm" target="_blank" rel="noopener" href="https://www.linkedin.com/sharing/share-offsite/?url='+e(url)+'">LinkedIn</a>'
+    +'</div>'
+    +'<p style="color:var(--grey);font-size:12.5px;margin-top:10px">Opens a proposal addressed to '+(L.to?('<b>'+esc(L.to)+'</b>'):'your client')+'. Tip: use <b>Preview</b> first to see exactly what they’ll receive.</p>';
+  toast('Shareable proposal ready');
+}
+function proposalCopy(){var i=document.getElementById('pr_link');if(!i)return;i.select();var ok=false;try{ok=document.execCommand('copy');}catch(e){}if(!ok&&navigator.clipboard){navigator.clipboard.writeText(i.value).then(function(){toast('Link copied');});return;}toast('Link copied');}
 function saveMediroutes(){
   var v=(document.getElementById('mr_url').value||'').trim();mediroutes.url=v||DEFAULT_MEDIR.url;
   var w=document.getElementById('mr_worker');if(w)mediroutes.workerUrl=(w.value||'').trim();
