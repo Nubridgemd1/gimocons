@@ -176,6 +176,11 @@ window.addEventListener('load',function(){sizeCanvas();
   cv.addEventListener('mousedown',start);cv.addEventListener('mousemove',move);window.addEventListener('mouseup',end);
   cv.addEventListener('touchstart',start,{passive:false});cv.addEventListener('touchmove',move,{passive:false});cv.addEventListener('touchend',end);
   var d=document.getElementById('f_date');if(d&&!d.value)d.value=new Date().toISOString().slice(0,10);
+  /* Prefill from the home-page "Become a Partner" form (?facility=&email=) */
+  try{var qs=new URLSearchParams(location.search);var f=qs.get('facility'),em=qs.get('email');
+    if(f){var fn=document.getElementById('f_name');if(fn&&!fn.value)fn.value=f;}
+    if(em){var fe=document.getElementById('f_email');if(fe&&!fe.value)fe.value=em;}
+    previews&&previews();}catch(e){}
 });
 window.addEventListener('resize',function(){var img=cv.toDataURL();sizeCanvas();});
 ['f_name','f_signer','f_title'].forEach(function(id){var el=document.getElementById(id);el&&el.addEventListener('input',previews);});
