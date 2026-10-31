@@ -35,71 +35,82 @@ async function sha256(s) {
 }
 const uid = () => crypto.randomUUID();
 const makeToken = () => [...crypto.getRandomValues(new Uint8Array(24))].map(b => b.toString(16).padStart(2, '0')).join('');
+const esc = (s) => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const GIMO_CC = ['info@gimocons.com', 'onome.hunt@gimocons.com', 'noms_h@hotmail.com'];
 
-// Email the facility (+ GIMO) when a trip is assigned, via FormSubmit — the same
-// path the site already uses. Overridable with NOTIFY_TO / NOTIFY_CC env vars.
-async function sendAssignmentEmail(env, trip) {
+// Send email via Resend when RESEND_API_KEY is set (reliable, branded, sends directly
+// to the recipient). Falls back to FormSubmit (owner inbox + CC) if Resend isn't
+// configured or errors. `to` = string or array; `cc` = array of strings.
+async function sendEmail(env, { to, cc, subject, html, fields }) {
+  const toArr = (Array.isArray(to) ? to : [to]).filter(Boolean);
+  const ccArr = (cc || []).filter(Boolean);
+  if (env.RESEND_API_KEY) {
+    try {
+      const from = env.MAIL_FROM || 'GIMO Consulting Services <noreply@gimocons.com>';
+      const body = { from, to: toArr, subject, html };
+      if (ccArr.length) body.cc = ccArr;
+      const r = await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: { Authorization: 'Bearer ' + env.RESEND_API_KEY, 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+      if (r.ok) return true; // otherwise fall through to FormSubmit
+    } catch (e) { /* fall through */ }
+  }
   try {
-    const to = (env.NOTIFY_TO || 'gimocons@gmail.com').trim();
-    const fac = await env.DB.prepare('SELECT email,name FROM facilities WHERE id=?').bind(trip.facility_id).first();
-    const defaultCc = 'info@gimocons.com,onome.hunt@gimocons.com,noms_h@hotmail.com';
-    const cc = [];
-    if (fac && fac.email) cc.push(fac.email);
-    (env.NOTIFY_CC != null ? env.NOTIFY_CC : defaultCc).split(',').map(s => s.trim()).filter(Boolean).forEach(x => cc.push(x));
-    const ref = 'GF-' + String(trip.id || '').slice(0, 5).toUpperCase();
-    const body = {
-      _subject: 'GIMO trip ' + ref + ' — driver assigned (' + (trip.facility_name || '') + ')',
-      _template: 'box',
-      _cc: cc.join(','),
-      Status: (trip.status || '').toUpperCase(),
-      Reference: ref,
-      Facility: trip.facility_name || '',
-      Rider: trip.rider_name || '',
-      Pickup: trip.pickup || '',
-      Destination: trip.dropoff || '',
-      Date: trip.trip_date || '',
-      Pickup_Time: trip.trip_time || '',
-      Driver: trip.driver || '(to be confirmed)',
-      Vehicle: trip.vehicle || '(to be confirmed)',
-      Pickup_ETA: trip.pickup_eta || '(to be confirmed)',
-      Mobility: trip.mobility || '',
-      Trip_Type: trip.round_trip ? 'Round trip' : 'One-way',
-      Estimated_Fare: trip.fare_estimate || 'to be confirmed',
-    };
-    // FormSubmit requires a browser-style Referer/Origin, or it rejects
-    // server-side posts ("will not work in pages browsed as HTML files").
-    await fetch('https://formsubmit.co/ajax/' + encodeURIComponent(to), {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Accept: 'application/json',
-        Referer: 'https://gimocons.com/',
-        Origin: 'https://gimocons.com',
-      },
-      body: JSON.stringify(body),
-    });
-  } catch (e) { /* notification is best-effort; never block the assignment */ }
-}
-
-// Email a password-reset link to the facility (CC'd via FormSubmit, same path as other mail).
-async function sendResetEmail(env, fac, link) {
-  try {
-    const to = (env.NOTIFY_TO || 'gimocons@gmail.com').trim();
-    const body = {
-      _subject: 'Reset your GIMO facility password',
-      _template: 'box',
-      _cc: fac.email || '',
-      Facility: fac.name || '',
-      Account_Email: fac.email || '',
-      Reset_Link: link,
-      Note: 'Open the reset link to set a new password. It expires in 1 hour. If you did not request this, you can ignore this email.',
-    };
-    await fetch('https://formsubmit.co/ajax/' + encodeURIComponent(to), {
+    const owner = (env.NOTIFY_TO || 'gimocons@gmail.com').trim();
+    const fsBody = Object.assign({ _subject: subject, _template: 'box', _cc: toArr.concat(ccArr).join(',') }, fields || {});
+    await fetch('https://formsubmit.co/ajax/' + encodeURIComponent(owner), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Accept: 'application/json', Referer: 'https://gimocons.com/', Origin: 'https://gimocons.com' },
-      body: JSON.stringify(body),
+      body: JSON.stringify(fsBody),
     });
-  } catch (e) { /* best-effort */ }
+    return true;
+  } catch (e) { return false; }
+}
+
+async function sendAssignmentEmail(env, trip) {
+  const fac = await env.DB.prepare('SELECT email,name FROM facilities WHERE id=?').bind(trip.facility_id).first();
+  const ref = 'GF-' + String(trip.id || '').slice(0, 5).toUpperCase();
+  const cc = env.NOTIFY_CC != null ? env.NOTIFY_CC.split(',').map(s => s.trim()).filter(Boolean) : GIMO_CC;
+  const row = (k, v) => `<tr><td style="padding:4px 14px 4px 0;color:#5a7080">${k}</td><td style="padding:4px 0;font-weight:600">${v || '—'}</td></tr>`;
+  const html = `<div style="font-family:Arial,Helvetica,sans-serif;max-width:560px;margin:0 auto;color:#15303f">
+    <h2 style="color:#0e2740;margin:0 0 2px">Driver assigned — ${esc(trip.facility_name || '')}</h2>
+    <p style="color:#5a7080;margin:0 0 14px">Trip ${ref} · ${esc((trip.status || '').toUpperCase())}</p>
+    <table style="font-size:14px;border-collapse:collapse">
+      ${row('Rider', esc(trip.rider_name))}${row('Pickup', esc(trip.pickup))}${row('Destination', esc(trip.dropoff))}
+      ${row('Date / time', esc((trip.trip_date || '') + ' ' + (trip.trip_time || '')))}${row('Mobility', esc(trip.mobility))}
+      ${row('Driver', esc(trip.driver))}${row('Vehicle', esc(trip.vehicle))}${row('Pickup ETA', esc(trip.pickup_eta))}
+      ${row('Estimated fare', esc(trip.fare_estimate))}
+    </table>
+    <p style="color:#5a7080;font-size:12px;margin-top:16px">GIMO Consulting Services · Non-Emergency Medical Transportation · (612) 483-1250</p>
+  </div>`;
+  return sendEmail(env, {
+    to: (fac && fac.email) ? fac.email : (env.NOTIFY_TO || 'gimocons@gmail.com'),
+    cc,
+    subject: 'GIMO trip ' + ref + ' — driver assigned (' + (trip.facility_name || '') + ')',
+    html,
+    fields: { Reference: ref, Facility: trip.facility_name || '', Rider: trip.rider_name || '', Pickup: trip.pickup || '', Destination: trip.dropoff || '', Date: trip.trip_date || '', Pickup_Time: trip.trip_time || '', Driver: trip.driver || '(to be confirmed)', Vehicle: trip.vehicle || '(to be confirmed)', Pickup_ETA: trip.pickup_eta || '(to be confirmed)', Estimated_Fare: trip.fare_estimate || 'to be confirmed' },
+  });
+}
+
+async function sendResetEmail(env, fac, link) {
+  const html = `<div style="font-family:Arial,Helvetica,sans-serif;max-width:520px;margin:0 auto;color:#15303f">
+    <h2 style="color:#0e2740">Reset your password</h2>
+    <p>Hello${fac.name ? ' ' + esc(fac.name) : ''},</p>
+    <p>We received a request to reset the password for your GIMO facility account. Click the button below to choose a new password — this link expires in 1 hour.</p>
+    <p><a href="${esc(link)}" style="display:inline-block;background:#1b8fd1;color:#fff;text-decoration:none;padding:12px 24px;border-radius:8px;font-weight:bold">Set a new password</a></p>
+    <p style="color:#5a7080;font-size:13px">Or paste this link into your browser:<br><a href="${esc(link)}">${esc(link)}</a></p>
+    <p style="color:#5a7080;font-size:13px">If you didn't request this, you can safely ignore this email.</p>
+    <p style="color:#5a7080;font-size:12px;margin-top:16px">GIMO Consulting Services · Non-Emergency Medical Transportation</p>
+  </div>`;
+  return sendEmail(env, {
+    to: fac.email,
+    cc: [(env.NOTIFY_TO || 'gimocons@gmail.com')],
+    subject: 'Reset your GIMO facility password',
+    html,
+    fields: { Account_Email: fac.email || '', Reset_Link: link, Note: 'Open the reset link to set a new password. Expires in 1 hour.' },
+  });
 }
 
 export default {
