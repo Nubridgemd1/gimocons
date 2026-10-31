@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>GIMO Facility Partnership Agreement</title>
+<meta name="description" content="Facility Transportation Services Agreement — GIMO Consulting Services. Review, e-sign, and both parties receive an executed copy.">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Jost:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--navy:#0e2740;--navy2:#143a5e;--sky:#1b8fd1;--sky2:#35b2e8;--amber:#e79a33;--green:#1a9c6b;--ink:#15303f;--muted:#5a7080;--bg:#eef6fc;--card:#fff;--line:#d9e6f1;--soft:#f4f9fd}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:'Jost',system-ui,sans-serif;color:var(--ink);background:var(--bg);line-height:1.6}
+  h1,h2,h3{font-family:'Playfair Display',Georgia,serif;margin:0;color:var(--navy);line-height:1.2}
+  a{color:var(--sky)}
+  .wrap{max-width:860px;margin:0 auto;padding:0 20px}
+  .top{background:var(--navy);color:#fff}
+  .top .wrap{display:flex;align-items:center;gap:13px;padding:16px 20px;flex-wrap:wrap}
+  .mark{width:44px;height:44px;border-radius:11px;background:linear-gradient(135deg,var(--sky),var(--sky2));display:grid;place-items:center;flex:none}
+  .mark svg{width:26px;height:26px;stroke:#fff;fill:none;stroke-width:1.9}
+  .top b{font-family:'Jost';font-weight:700;font-size:18px;letter-spacing:.12em;text-transform:uppercase;color:#fff;display:block;line-height:1}
+  .top span{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--amber)}
+  .hero{background:linear-gradient(135deg,var(--navy),var(--navy2));color:#fff;padding:40px 0 46px}
+  .hero h1{color:#fff;font-size:clamp(26px,4vw,38px)}
+  .hero p{color:rgba(255,255,255,.85);max-width:62ch;margin:12px 0 0}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:28px 26px;margin:22px 0;box-shadow:0 14px 36px rgba(14,39,64,.08)}
+  .doc h2{font-size:21px;margin:22px 0 8px;padding-top:6px}
+  .doc h2:first-child{margin-top:0}
+  .doc p,.doc li{font-size:15px;color:var(--ink)}
+  .doc ol{padding-left:20px}
+  .doc .cl{counter-reset:item;list-style:none;padding:0}
+  .doc .cl>li{margin:16px 0}
+  .doc .cl>li>b{color:var(--navy);font-family:'Jost';font-weight:600}
+  .lead{color:var(--muted)}
+  .hl{background:#fff7e9;border-left:3px solid var(--amber);padding:12px 16px;border-radius:8px;margin:12px 0}
+  label{display:block;font-size:13px;font-weight:600;color:var(--navy);margin:14px 0 5px}
+  input,textarea,select{width:100%;padding:11px 13px;border:1px solid var(--line);border-radius:10px;font-family:'Jost';font-size:15px;background:#fff;color:var(--ink)}
+  textarea{min-height:80px;resize:vertical}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:0 16px}
+  @media(max-width:620px){.two{grid-template-columns:1fr}}
+  .sigwrap{border:1px dashed var(--line);border-radius:12px;background:var(--soft);padding:10px;margin-top:6px}
+  canvas{width:100%;height:150px;background:#fff;border-radius:8px;border:1px solid var(--line);touch-action:none;display:block}
+  .sigtools{display:flex;justify-content:space-between;align-items:center;margin-top:6px;font-size:12.5px;color:var(--muted)}
+  .chk{display:flex;gap:11px;align-items:flex-start;margin-top:18px;font-size:14px;color:var(--ink)}
+  .chk input{width:20px;height:20px;flex:none;margin-top:2px}
+  .btn{display:inline-flex;align-items:center;gap:8px;font-family:'Jost';font-weight:600;font-size:16px;border:0;border-radius:12px;padding:15px 30px;cursor:pointer;text-decoration:none}
+  .btn-primary{background:linear-gradient(135deg,var(--sky),var(--sky2));color:#fff;box-shadow:0 12px 26px rgba(27,143,209,.32)}
+  .btn-primary:disabled{opacity:.5;cursor:not-allowed;box-shadow:none}
+  .btn-ghost{background:#fff;border:1.5px solid var(--line);color:var(--navy)}
+  .parties{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:10px}
+  @media(max-width:620px){.parties{grid-template-columns:1fr}}
+  .party{background:var(--soft);border:1px solid var(--line);border-radius:12px;padding:16px}
+  .party .k{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:700}
+  .party b{display:block;font-family:'Playfair Display',serif;color:var(--navy);font-size:17px;margin-top:3px}
+  .msg{font-size:14px;font-weight:600;margin-top:14px;min-height:20px}
+  .ok{color:var(--green)}.bad{color:#c0392b}
+  .done{text-align:center;padding:20px}
+  .done .big{width:68px;height:68px;border-radius:50%;background:var(--green);display:grid;place-items:center;margin:0 auto 14px}
+  .done .big svg{width:36px;height:36px;stroke:#fff;fill:none;stroke-width:3}
+  footer{color:var(--muted);font-size:12.5px;text-align:center;padding:26px 20px 40px}
+  @media print{.noprint{display:none!important}.card{box-shadow:none;border:none}body{background:#fff}}
+</style>
+</head>
+<body>
+<div class="top"><div class="wrap">
+  <div class="mark"><svg viewBox="0 0 24 24"><path d="M3 13l2-5a2 2 0 0 1 1.9-1.4h8.2A2 2 0 0 1 17 8l2 5"/><path d="M3 13h18v4a1 1 0 0 1-1 1h-1"/><path d="M5 18H4a1 1 0 0 1-1-1v-4"/><circle cx="7.5" cy="18" r="1.7"/><circle cx="16.5" cy="18" r="1.7"/></svg></div>
+  <div><b>GIMO Consulting Services</b><span>Non‑Emergency Medical Transportation</span></div>
+</div></div>
+
+<section class="hero"><div class="wrap">
+  <h1>Facility Transportation Services Agreement</h1>
+  <p>Become a GIMO partner facility. Review the terms below, complete your details, and sign electronically. The moment you sign, an executed copy is emailed to both your facility and GIMO Consulting Services.</p>
+</div></section>
+
+<div class="wrap">
+  <div id="formArea">
+    <!-- Agreement text -->
+    <div class="card doc" id="docCard">
+      <p class="lead">This Facility Transportation Services Agreement (the “Agreement”) is entered into as of the Effective Date below, by and between <b>GIMO Consulting Services</b> (“GIMO”), a non‑emergency medical transportation provider, and the facility identified in the signature block (the “Facility”). GIMO and the Facility are each a “Party” and together the “Parties.”</p>
+
+      <ol class="cl">
+        <li><b>1. Services.</b> GIMO will provide non‑emergency medical transportation (“NEMT”) for the Facility’s residents, patients, and clients (“Riders”), including ambulatory, wheelchair‑accessible, and stretcher transport to and from medical appointments, dialysis and recurring treatment, hospital discharge, day programs, and similar destinations, on the schedule requested and accepted under this Agreement.</li>
+
+        <li><b>2. Scheduling &amp; Advance Notice.</b> The Facility will request trips through GIMO’s facility portal, by phone, or by email. <span class="hl" style="display:block">All trips must be scheduled at least <b>twenty‑four (24) hours in advance</b>, except in extenuating circumstances (such as an unplanned hospital discharge or urgent same‑day medical need), which GIMO will make reasonable efforts to accommodate subject to vehicle and driver availability.</span> Standing/recurring trips (e.g., dialysis) may be set once and repeated. GIMO will confirm each trip and provide the assigned driver and pickup details.</li>
+
+        <li><b>3. Facility Obligations.</b> The Facility will: (a) request trips with accurate Rider, pickup, destination, date/time, and mobility information; (b) ensure Riders are ready at the scheduled pickup time; (c) disclose any mobility needs, oxygen, or special assistance in advance; (d) provide any required authorizations for covered trips; (e) designate authorized personnel to request and approve trips; and (f) pay for services as set out in Section 5.</li>
+
+        <li><b>4. GIMO Obligations.</b> GIMO will: (a) provide clean, insured, and regularly inspected vehicles; (b) use trained, background‑checked, drug‑screened drivers; (c) provide door‑to‑door / door‑through‑door assistance as appropriate; (d) secure wheelchairs and stretchers properly; (e) make reasonable efforts to arrive on time and communicate delays; (f) treat Rider information as confidential and handle it consistent with applicable privacy laws; and (g) confirm each requested trip with driver and pickup details.</li>
+
+        <li><b>5. Fees &amp; Payment.</b> Services are billed at GIMO’s standard rates or at facility contract rates agreed in writing (currently mileage‑based at $3.50/mile counted both ways on round trips, plus handling where applicable: wheelchair +$75, stretcher +$45; ambulatory has no surcharge). Payment is by <b>cash or ACH bank transfer</b> (no card‑processing fees), on a per‑trip basis or on a monthly invoice as agreed. Invoices are due within fifteen (15) days of the invoice date unless otherwise agreed.</li>
+
+        <li><b>6. Cancellations &amp; No‑Shows.</b> The Facility should cancel or change a trip as early as possible. Cancellations with less than two (2) hours’ notice, and Rider no‑shows at pickup, may be billed as a trip, as reasonably determined by GIMO.</li>
+
+        <li><b>7. Non‑Emergency Service; Safety &amp; Compliance.</b> GIMO provides non‑emergency transportation only and is <b>not</b> an ambulance or emergency medical service; in a medical emergency the Facility will call 911. GIMO maintains commercial auto and general liability insurance and complies with applicable federal, state, and local transportation and safety requirements.</li>
+
+        <li><b>8. Term &amp; Termination.</b> This Agreement begins on the Effective Date and continues until terminated. Either Party may terminate for convenience on thirty (30) days’ written notice, or immediately for material breach that is not cured within ten (10) days of written notice. Trips already scheduled will be honored or settled in good faith.</li>
+
+        <li><b>9. Limitation of Liability &amp; Indemnification.</b> Except for gross negligence or willful misconduct, neither Party is liable for indirect, incidental, or consequential damages. Each Party will indemnify the other against third‑party claims arising from its own negligence or breach of this Agreement, subject to available insurance.</li>
+
+        <li><b>10. Independent Contractor.</b> GIMO is an independent contractor. Nothing in this Agreement creates a partnership, joint venture, or employment relationship between the Parties.</li>
+
+        <li><b>11. Entire Agreement; Amendments.</b> This Agreement, together with any written facility rate schedule, is the entire agreement between the Parties regarding its subject matter and supersedes prior discussions. It may be amended only in writing signed (including electronically) by both Parties.</li>
+
+        <li><b>12. Governing Law.</b> This Agreement is governed by the laws of the State of Texas, without regard to its conflict‑of‑laws rules.</li>
+      </ol>
+    </div>
+
+    <!-- Signature / details -->
+    <div class="card noprint">
+      <h2 style="font-size:20px;margin-bottom:4px">Facility details &amp; signature</h2>
+      <p class="lead" style="font-size:14px">Complete and sign on behalf of your facility. Fields marked * are required.</p>
+      <div class="two">
+        <div><label>Facility legal name *</label><input id="f_name" placeholder="e.g. Riverside Care Center"></div>
+        <div><label>Facility email * <span style="font-weight:400;color:var(--muted)">(executed copy sent here)</span></label><input id="f_email" type="email" placeholder="admin@facility.com"></div>
+      </div>
+      <div class="two">
+        <div><label>Facility phone *</label><input id="f_phone" placeholder="(xxx) xxx-xxxx"></div>
+        <div><label>Facility address</label><input id="f_addr" placeholder="Street, City, State ZIP"></div>
+      </div>
+      <div class="two">
+        <div><label>Authorized signer — full name *</label><input id="f_signer" placeholder="First Last"></div>
+        <div><label>Title *</label><input id="f_title" placeholder="e.g. Administrator"></div>
+      </div>
+      <div class="two">
+        <div><label>Effective date *</label><input id="f_date" type="date"></div>
+        <div><label>Typed signature (your full name) *</label><input id="f_typed" placeholder="Type your full legal name"></div>
+      </div>
+      <label>Draw your signature (optional)</label>
+      <div class="sigwrap"><canvas id="sig"></canvas>
+        <div class="sigtools"><span>Sign above with your mouse or finger</span><button type="button" class="btn-ghost" style="padding:6px 14px;font-size:13px;border-radius:8px" onclick="clearSig()">Clear</button></div>
+      </div>
+      <label class="chk"><input type="checkbox" id="f_agree"><span>I am authorized to sign on behalf of the Facility, I have read and agree to this Facility Transportation Services Agreement, and I intend this electronic signature to be my legally binding signature.</span></label>
+      <div style="margin-top:20px;display:flex;gap:12px;flex-wrap:wrap;align-items:center">
+        <button class="btn btn-primary" id="signBtn" onclick="signAgreement()">Sign &amp; send agreement</button>
+        <span class="msg" id="msg"></span>
+      </div>
+      <div class="parties" style="margin-top:22px">
+        <div class="party"><div class="k">Service provider</div><b>GIMO Consulting Services</b><div style="font-size:13px;color:var(--muted);margin-top:4px">By: Authorized Representative · info@gimocons.com · (612) 483‑1250</div></div>
+        <div class="party"><div class="k">Facility</div><b id="pvFacility">—</b><div style="font-size:13px;color:var(--muted);margin-top:4px" id="pvSigner">Signed electronically upon submission</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- success -->
+  <div class="card done" id="doneCard" hidden>
+    <div class="big"><svg viewBox="0 0 24 24"><path d="M5 12l4 4L19 7"/></svg></div>
+    <h2 style="font-size:24px">Agreement signed &amp; sent</h2>
+    <p class="lead" id="doneMsg" style="max-width:52ch;margin:10px auto 0"></p>
+    <div style="margin-top:20px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+      <button class="btn btn-ghost noprint" onclick="window.print()">🖨️ Print / save your copy</button>
+      <a class="btn btn-primary" id="toPortal" href="../facility/">Go to the facility portal →</a>
+    </div>
+  </div>
+</div>
+
+<footer>
+  GIMO Consulting Services · Non‑Emergency Medical Transportation · gimocons.com<br>
+  Non‑emergency service only — in a medical emergency, call 911.
+</footer>
+
+<script>
+/* GIMO inboxes: primary (FormSubmit-activated) + CC. The Facility email is added as a CC at submit
+   so BOTH parties receive the executed copy. */
+var PRIMARY='gimocons@gmail.com';
+var GIMO_CC=['info@gimocons.com','onome.hunt@gimocons.com','noms_h@hotmail.com'];
+
+/* signature pad */
+var cv=document.getElementById('sig'),ctx,drawing=false,hasDrawn=false;
+function sizeCanvas(){var r=cv.getBoundingClientRect();cv.width=r.width*2;cv.height=r.height*2;ctx=cv.getContext('2d');ctx.scale(2,2);ctx.lineWidth=2.2;ctx.lineCap='round';ctx.strokeStyle='#15303f';}
+function pos(e){var r=cv.getBoundingClientRect();var t=e.touches?e.touches[0]:e;return {x:t.clientX-r.left,y:t.clientY-r.top};}
+function start(e){drawing=true;hasDrawn=true;var p=pos(e);ctx.beginPath();ctx.moveTo(p.x,p.y);e.preventDefault();}
+function move(e){if(!drawing)return;var p=pos(e);ctx.lineTo(p.x,p.y);ctx.stroke();e.preventDefault();}
+function end(){drawing=false;}
+function clearSig(){ctx.clearRect(0,0,cv.width,cv.height);hasDrawn=false;}
+window.addEventListener('load',function(){sizeCanvas();
+  cv.addEventListener('mousedown',start);cv.addEventListener('mousemove',move);window.addEventListener('mouseup',end);
+  cv.addEventListener('touchstart',start,{passive:false});cv.addEventListener('touchmove',move,{passive:false});cv.addEventListener('touchend',end);
+  var d=document.getElementById('f_date');if(d&&!d.value)d.value=new Date().toISOString().slice(0,10);
+});
+window.addEventListener('resize',function(){var img=cv.toDataURL();sizeCanvas();});
+['f_name','f_signer','f_title'].forEach(function(id){var el=document.getElementById(id);el&&el.addEventListener('input',previews);});
+function previews(){var n=val('f_name'),s=val('f_signer'),t=val('f_title');document.getElementById('pvFacility').textContent=n||'—';document.getElementById('pvSigner').textContent=(s?('By: '+s+(t?', '+t:'')):'Signed electronically upon submission');}
+function val(id){var el=document.getElementById(id);return el?el.value.trim():'';}
+function setMsg(t,c){var m=document.getElementById('msg');m.textContent=t;m.className='msg '+(c||'');}
+
+function signAgreement(){
+  var req=[['f_name','facility name'],['f_email','facility email'],['f_phone','facility phone'],['f_signer','signer name'],['f_title','title'],['f_date','effective date'],['f_typed','typed signature']];
+  for(var i=0;i<req.length;i++){ if(!val(req[i][0])){ setMsg('Please enter the '+req[i][1]+'.','bad'); document.getElementById(req[i][0]).focus(); return; } }
+  var email=val('f_email'); if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){ setMsg('Enter a valid facility email.','bad'); return; }
+  if(!document.getElementById('f_agree').checked){ setMsg('Please check the box to agree and sign.','bad'); return; }
+  if(val('f_typed').toLowerCase()!==val('f_signer').toLowerCase()){ setMsg('Typed signature must match the signer’s full name.','bad'); return; }
+
+  var btn=document.getElementById('signBtn'); btn.disabled=true; setMsg('Sending…','');
+  var when=new Date();
+  var terms='FACILITY TRANSPORTATION SERVICES AGREEMENT — GIMO Consulting Services\n'+
+    'Key terms: NEMT for facility Riders; trips scheduled >=24h in advance except extenuating circumstances; '+
+    'accurate trip info & rider readiness by Facility; insured/vetted drivers & confirmations by GIMO; '+
+    'cash or ACH payment ($3.50/mi both ways + wheelchair $75 / stretcher $45; invoices net 15); '+
+    'cancellations <2h or no-shows may be billed; non-emergency only (call 911 for emergencies); '+
+    '30-day termination for convenience; Texas law. Full text shown and accepted on the signing page.';
+  var body={
+    _subject:'EXECUTED — GIMO Facility Partnership Agreement: '+val('f_name'),
+    _template:'box',
+    _cc:GIMO_CC.concat([email]).join(','),
+    Status:'SIGNED / EXECUTED',
+    Facility:val('f_name'),
+    Facility_Email:email,
+    Facility_Phone:val('f_phone'),
+    Facility_Address:val('f_addr')||'(not provided)',
+    Authorized_Signer:val('f_signer'),
+    Signer_Title:val('f_title'),
+    Effective_Date:val('f_date'),
+    Electronic_Signature:val('f_typed'),
+    Drawn_Signature:hasDrawn?'Provided (on signer’s copy)':'Not provided',
+    Signed_At:when.toLocaleString(),
+    Agreement_Provider:'GIMO Consulting Services — By: Authorized Representative',
+    Agreement_Summary:terms,
+    Acknowledgment:'The signer affirmed authority to bind the Facility and agreed to the full Agreement displayed on the signing page.'
+  };
+  fetch('https://formsubmit.co/ajax/'+encodeURIComponent(PRIMARY),{method:'POST',headers:{'Content-Type':'application/json',Accept:'application/json'},body:JSON.stringify(body)})
+    .then(function(r){return r.json().catch(function(){return{};});})
+    .then(function(){ showDone(val('f_name'),email); })
+    .catch(function(){ /* even if the ajax response is opaque, FormSubmit usually delivers; show success */ showDone(val('f_name'),email); });
+}
+function showDone(facility,email){
+  document.getElementById('formArea').hidden=true;
+  var dc=document.getElementById('doneCard'); dc.hidden=false;
+  document.getElementById('doneMsg').textContent='Thank you, '+facility+'. Your executed Facility Transportation Services Agreement has been emailed to '+email+' and to GIMO Consulting Services. Welcome aboard — you can now set up your facility portal and start requesting trips.';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,324 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>GIMO Facility Dashboard</title>
+<meta name="description" content="GIMO facility dashboard — partner facilities create trips, pay to confirm, track status, and view reports.">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Jost:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--navy:#0e2740;--navy2:#143a5e;--sky:#1b8fd1;--sky2:#35b2e8;--amber:#e79a33;--green:#1a9c6b;--ink:#15303f;--muted:#5a7080;--bg:#eef6fc;--card:#fff;--line:#d9e6f1;--soft:#f4f9fd;--red:#c0392b}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:'Jost',system-ui,sans-serif;color:var(--ink);background:var(--bg);line-height:1.6}
+  h1,h2,h3{font-family:'Playfair Display',Georgia,serif;margin:0;color:var(--navy);line-height:1.2}
+  a{color:var(--sky)}
+  .wrap{max-width:900px;margin:0 auto;padding:0 20px}
+  .top{background:var(--navy);color:#fff}
+  .top .wrap{display:flex;align-items:center;justify-content:space-between;gap:13px;padding:15px 20px;flex-wrap:wrap}
+  .brand{display:flex;align-items:center;gap:12px}
+  .mark{width:42px;height:42px;border-radius:11px;background:linear-gradient(135deg,var(--sky),var(--sky2));display:grid;place-items:center;flex:none}
+  .mark svg{width:25px;height:25px;stroke:#fff;fill:none;stroke-width:1.9}
+  .top b{font-family:'Jost';font-weight:700;font-size:16px;letter-spacing:.1em;text-transform:uppercase;color:#fff;display:block;line-height:1}
+  .top span{font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--amber)}
+  .top .who{font-size:13px;color:rgba(255,255,255,.85);text-align:right}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:24px;margin:20px 0;box-shadow:0 14px 36px rgba(14,39,64,.08)}
+  .card h2{font-size:20px;margin-bottom:4px}
+  .lead{color:var(--muted);font-size:14px}
+  label{display:block;font-size:13px;font-weight:600;color:var(--navy);margin:14px 0 5px}
+  input,textarea,select{width:100%;padding:11px 13px;border:1px solid var(--line);border-radius:10px;font-family:'Jost';font-size:15px;background:#fff;color:var(--ink)}
+  textarea{min-height:66px;resize:vertical}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:0 16px}
+  .three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0 16px}
+  @media(max-width:620px){.two,.three{grid-template-columns:1fr}}
+  .btn{display:inline-flex;align-items:center;gap:8px;font-family:'Jost';font-weight:600;font-size:15px;border:0;border-radius:11px;padding:13px 24px;cursor:pointer;text-decoration:none}
+  .btn-primary{background:linear-gradient(135deg,var(--sky),var(--sky2));color:#fff;box-shadow:0 10px 22px rgba(27,143,209,.3)}
+  .btn-primary:disabled{opacity:.5;cursor:not-allowed}
+  .btn-amber{background:linear-gradient(135deg,var(--amber),#f0b457);color:#3a2504}
+  .btn-ghost{background:#fff;border:1.5px solid var(--line);color:var(--navy)}
+  .btn.sm{padding:9px 16px;font-size:13.5px}
+  .acct{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;background:var(--soft);border:1px solid var(--line);border-radius:12px;padding:14px 18px}
+  .acct b{font-family:'Playfair Display',serif;color:var(--navy);font-size:17px}
+  .acct .sub{font-size:13px;color:var(--muted)}
+  .tabs{display:inline-flex;background:#fff;border:1px solid var(--line);border-radius:12px;padding:4px;gap:2px;margin-bottom:4px;flex-wrap:wrap}
+  .tabs button{border:0;background:transparent;color:var(--muted);font-family:'Jost';font-weight:600;font-size:14px;padding:9px 16px;border-radius:9px;cursor:pointer}
+  .tabs button.on{background:var(--navy);color:#fff}
+  .pane{display:none}.pane.on{display:block}
+  .warn{background:#fff7e9;border:1px solid #f0d9ad;border-left:3px solid var(--amber);border-radius:8px;padding:12px 14px;margin-top:12px;font-size:13.5px;color:#7a5a16}
+  .warn[hidden]{display:none}
+  .fare{display:flex;justify-content:space-between;align-items:center;background:var(--soft);border:1px dashed var(--line);border-radius:10px;padding:12px 16px;margin-top:14px;font-size:14px}
+  .fare b{font-family:'Jost';font-weight:700;color:var(--navy);font-size:18px}
+  .msg{font-size:14px;font-weight:600;margin-top:12px;min-height:20px}
+  .ok{color:var(--green)}.bad{color:var(--red)}
+  .trip{border:1px solid var(--line);border-radius:12px;padding:15px 16px;margin-top:11px;background:#fff}
+  .trip .r1{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center}
+  .trip .rider{font-weight:600;color:var(--navy);font-size:15.5px}
+  .pill{font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;border-radius:999px;padding:4px 11px}
+  .pill.received{color:#9a6a12;background:#fdf1dc}
+  .pill.assigned{color:#145f9c;background:#e2effa}
+  .pill.completed{color:var(--green);background:#e6f6ee}
+  .pill.cancelled{color:var(--red);background:#fbe6e3}
+  .trip .det{font-size:13.5px;color:var(--muted);margin-top:6px}
+  .trip .acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:11px}
+  .empty{color:var(--muted);font-size:14px;text-align:center;padding:18px}
+  .note{font-size:12.5px;color:var(--muted)}
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+  @media(max-width:620px){.kpis{grid-template-columns:1fr 1fr}}
+  .kpi{background:var(--soft);border:1px solid var(--line);border-radius:12px;padding:16px}
+  .kpi .n{font-family:'Playfair Display',serif;font-size:26px;color:var(--navy)}
+  .kpi .l{font-size:12px;color:var(--muted);letter-spacing:.03em}
+  table{width:100%;border-collapse:collapse;margin-top:14px;font-size:13.5px}
+  th{text-align:left;color:var(--muted);font-size:11.5px;text-transform:uppercase;letter-spacing:.05em;padding:8px 8px;border-bottom:1px solid var(--line)}
+  td{padding:10px 8px;border-bottom:1px solid #eef3f8;vertical-align:top}
+  .rtt{overflow-x:auto}
+  footer{color:var(--muted);font-size:12.5px;text-align:center;padding:24px 20px 40px}
+  .hide{display:none!important}
+</style>
+</head>
+<body>
+<div class="top"><div class="wrap">
+  <div class="brand">
+    <div class="mark"><svg viewBox="0 0 24 24"><path d="M3 13l2-5a2 2 0 0 1 1.9-1.4h8.2A2 2 0 0 1 17 8l2 5"/><path d="M3 13h18v4a1 1 0 0 1-1 1h-1"/><path d="M5 18H4a1 1 0 0 1-1-1v-4"/><circle cx="7.5" cy="18" r="1.7"/><circle cx="16.5" cy="18" r="1.7"/></svg></div>
+    <div><b>GIMO Facility Dashboard</b><span>Non‑Emergency Medical Transportation</span></div>
+  </div>
+  <div class="who" id="who"></div>
+</div></div>
+
+<div class="wrap">
+  <!-- ACCOUNT -->
+  <div class="card" id="acctCard">
+    <h2>Your facility account</h2>
+    <div id="acctView" hidden>
+      <div class="acct">
+        <div><b id="avName">—</b><div class="sub" id="avSub">—</div></div>
+        <div style="display:flex;gap:8px"><button class="btn btn-ghost sm" onclick="editAcct()">Edit</button><button class="btn btn-ghost sm" onclick="signOut()">Sign out</button></div>
+      </div>
+    </div>
+    <div id="acctForm">
+      <p class="lead">Set up your facility once on this device. Trip confirmations are emailed to your facility email.</p>
+      <div class="two">
+        <div><label>Facility name *</label><input id="a_name" placeholder="e.g. Riverside Care Center"></div>
+        <div><label>Facility email * <span style="font-weight:400;color:var(--muted)">(confirmations sent here)</span></label><input id="a_email" type="email" placeholder="admin@facility.com"></div>
+      </div>
+      <div class="two">
+        <div><label>Contact person *</label><input id="a_contact" placeholder="First Last"></div>
+        <div><label>Facility phone *</label><input id="a_phone" placeholder="(xxx) xxx-xxxx"></div>
+      </div>
+      <label>Facility address</label><input id="a_addr" placeholder="Street, City, State ZIP">
+      <div style="margin-top:16px;display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+        <button class="btn btn-primary" onclick="saveAcct()">Save account</button>
+        <span class="note">New partner? <a href="../partner/">Sign the partnership agreement first →</a></span>
+      </div>
+      <div class="msg" id="acctMsg"></div>
+    </div>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div id="dash" class="hide">
+    <div class="tabs">
+      <button class="on" data-tab="new" onclick="tab('new',this)">＋ New trip</button>
+      <button data-tab="trips" onclick="tab('trips',this)">My trips</button>
+      <button data-tab="reports" onclick="tab('reports',this)">Reports</button>
+    </div>
+
+    <!-- NEW TRIP -->
+    <div class="pane on" id="pane-new">
+      <div class="card">
+        <h2>Create a trip</h2>
+        <p class="lead">Please schedule at least <b>24 hours ahead</b>. Same‑day/urgent needs are accepted as extenuating circumstances, subject to availability.</p>
+        <div class="two">
+          <div><label>Rider name *</label><input id="t_rider" placeholder="Resident / patient name"></div>
+          <div><label>Rider phone (optional)</label><input id="t_phone" placeholder="(xxx) xxx-xxxx"></div>
+        </div>
+        <label>Pickup address (from) *</label><input id="t_from" placeholder="Pickup location">
+        <label>Destination (to) *</label><input id="t_to" placeholder="Appointment / destination">
+        <div class="three">
+          <div><label>Date *</label><input id="t_date" type="date"></div>
+          <div><label>Pickup time *</label><input id="t_time" type="time"></div>
+          <div><label>Est. miles (one‑way)</label><input id="t_miles" type="number" min="0" step="0.5" placeholder="optional" oninput="calcFare()"></div>
+        </div>
+        <div class="two">
+          <div><label>Trip type</label><select id="t_type" onchange="calcFare()"><option>One-way</option><option>Round trip</option></select></div>
+          <div><label>Mobility</label><select id="t_mob" onchange="calcFare()"><option>Ambulatory</option><option>Wheelchair</option><option>Stretcher</option></select></div>
+        </div>
+        <label>Appointment / return time &amp; notes (optional)</label><textarea id="t_notes" placeholder="Appointment time, return pickup, oxygen, special assistance, standing/recurring schedule…"></textarea>
+        <div class="warn" id="warn24" hidden>
+          This pickup is within 24 hours — we’ll treat it as an <b>extenuating circumstance</b> and do our best to accommodate. Please add a brief reason.
+          <input id="t_reason" placeholder="Reason (e.g. hospital discharge today)" style="margin-top:8px">
+        </div>
+        <div class="fare"><span class="lead">Estimated fare <span class="note">(enter miles for an estimate; GIMO confirms the final fare)</span></span><b id="fareOut">—</b></div>
+        <div style="margin-top:16px;display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+          <button class="btn btn-primary" id="tripBtn" onclick="submitTrip()">Submit trip request</button>
+          <span class="msg" id="tripMsg"></span>
+        </div>
+        <p class="note" style="margin-top:12px">On submit, a confirmation emails to your facility and GIMO (trip received). You can then <b>pay to confirm</b> from “My trips.” GIMO emails the assigned driver &amp; pickup details once scheduled.</p>
+      </div>
+    </div>
+
+    <!-- MY TRIPS -->
+    <div class="pane" id="pane-trips">
+      <div class="card">
+        <h2>My trips</h2>
+        <p class="lead">Track each request. Status updates from GIMO also arrive by email.</p>
+        <div id="tripList"></div>
+      </div>
+    </div>
+
+    <!-- REPORTS -->
+    <div class="pane" id="pane-reports">
+      <div class="card">
+        <h2>Reports</h2>
+        <p class="lead">Trips your facility has requested through GIMO.</p>
+        <div class="kpis" id="kpis" style="margin-top:14px"></div>
+        <div class="rtt"><table id="repTable"><thead><tr><th>Ref</th><th>Rider</th><th>Route</th><th>Date</th><th>Status</th><th>Est. $</th></tr></thead><tbody id="repBody"></tbody></table></div>
+        <div style="margin-top:14px"><button class="btn btn-ghost sm" onclick="exportCsv()">⬇ Export CSV</button></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  GIMO Consulting Services · (612) 483‑1250 · (281) 935‑9597 · info@gimocons.com · gimocons.com<br>
+  Non‑emergency service only — in a medical emergency, call 911.
+</footer>
+
+<script>
+var PRIMARY='gimocons@gmail.com';
+var GIMO_CC=['info@gimocons.com','onome.hunt@gimocons.com','noms_h@hotmail.com'];
+/* Optional: a GIMO payment link (e.g. a Stripe Payment Link). If set, "Pay to confirm" opens it;
+   otherwise the facility pays by cash/ACH per the partnership agreement and GIMO sends any link. */
+var PAY_LINK='';
+var PRICING={perMile:3.5,wheelchair:75,stretcher:45};
+
+var LS={get:function(k,d){try{var v=localStorage.getItem(k);return v?JSON.parse(v):d;}catch(e){return d;}},set:function(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}};
+var acct=LS.get('gimo_facility',null);
+var trips=LS.get('gimo_facility_trips',[]);
+function val(id){var el=document.getElementById(id);return el?el.value.trim():'';}
+function setMsg(id,t,c){var m=document.getElementById(id);if(m){m.textContent=t;m.className='msg '+(c||'');}}
+function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+
+function renderAcct(){
+  var view=document.getElementById('acctView'),form=document.getElementById('acctForm');
+  if(acct&&acct.email){
+    view.hidden=false;form.classList.add('hide');
+    document.getElementById('avName').textContent=acct.name||'Facility';
+    document.getElementById('avSub').textContent=(acct.contact?acct.contact+' · ':'')+acct.email+(acct.phone?' · '+acct.phone:'');
+    document.getElementById('who').textContent='Signed in: '+(acct.name||acct.email);
+    document.getElementById('dash').classList.remove('hide');
+  }else{
+    view.hidden=true;form.classList.remove('hide');
+    document.getElementById('who').textContent='';
+    document.getElementById('dash').classList.add('hide');
+  }
+}
+function editAcct(){document.getElementById('a_name').value=acct.name||'';document.getElementById('a_email').value=acct.email||'';document.getElementById('a_contact').value=acct.contact||'';document.getElementById('a_phone').value=acct.phone||'';document.getElementById('a_addr').value=acct.addr||'';document.getElementById('acctView').hidden=true;document.getElementById('acctForm').classList.remove('hide');}
+function signOut(){acct=null;LS.set('gimo_facility',null);renderAcct();}
+function saveAcct(){
+  var name=val('a_name'),email=val('a_email'),contact=val('a_contact'),phone=val('a_phone');
+  if(!name||!email||!contact||!phone){setMsg('acctMsg','Please complete name, email, contact and phone.','bad');return;}
+  if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){setMsg('acctMsg','Enter a valid facility email.','bad');return;}
+  acct={name:name,email:email,contact:contact,phone:phone,addr:val('a_addr')};
+  LS.set('gimo_facility',acct);setMsg('acctMsg','Account saved.','ok');renderAcct();
+}
+
+function tab(name,btn){
+  document.querySelectorAll('.tabs button').forEach(function(b){b.classList.remove('on');});
+  if(btn)btn.classList.add('on');
+  document.querySelectorAll('.pane').forEach(function(p){p.classList.remove('on');});
+  var pane=document.getElementById('pane-'+name);if(pane)pane.classList.add('on');
+  if(name==='trips')renderTrips();
+  if(name==='reports')renderReports();
+}
+
+function fareOf(miles,type,mob){
+  miles=parseFloat(miles)||0; if(miles<=0)return null;
+  var f=miles*PRICING.perMile*(type==='Round trip'?2:1);
+  if(mob==='Wheelchair')f+=PRICING.wheelchair; else if(mob==='Stretcher')f+=PRICING.stretcher;
+  return Math.round(f*100)/100;
+}
+function calcFare(){
+  var f=fareOf(val('t_miles'),val('t_type'),val('t_mob'));
+  document.getElementById('fareOut').textContent=(f==null?'—':('$'+f.toFixed(2)));
+}
+function check24(){
+  var d=val('t_date'),t=val('t_time');var w=document.getElementById('warn24');
+  if(!d||!t){w.hidden=true;return;}
+  var when=new Date(d+'T'+t);var diff=(when-new Date())/36e5;
+  w.hidden=!(when>new Date()&&diff<24);
+}
+['t_date','t_time'].forEach(function(id){var el=document.getElementById(id);el&&el.addEventListener('input',check24);});
+
+function submitTrip(){
+  if(!acct||!acct.email){setMsg('tripMsg','Please save your facility account first.','bad');return;}
+  var req=[['t_rider','rider name'],['t_from','pickup address'],['t_to','destination'],['t_date','date'],['t_time','pickup time']];
+  for(var i=0;i<req.length;i++){if(!val(req[i][0])){setMsg('tripMsg','Please enter the '+req[i][1]+'.','bad');document.getElementById(req[i][0]).focus();return;}}
+  var when=new Date(val('t_date')+'T'+val('t_time'));
+  var within24=when>new Date()&&(when-new Date())/36e5<24;
+  if(within24&&!val('t_reason')){setMsg('tripMsg','This trip is within 24 hours — add a brief reason (extenuating circumstance).','bad');document.getElementById('t_reason').focus();return;}
+  var ref='GF-'+Math.random().toString(36).slice(2,7).toUpperCase();
+  var fare=fareOf(val('t_miles'),val('t_type'),val('t_mob'));
+  var btn=document.getElementById('tripBtn');btn.disabled=true;setMsg('tripMsg','Submitting…','');
+  var body={
+    _subject:'GIMO trip request '+ref+' — '+acct.name,_template:'box',
+    _cc:GIMO_CC.concat([acct.email]).join(','),
+    Status:'RECEIVED — awaiting driver assignment',Reference:ref,
+    Facility:acct.name,Facility_Contact:acct.contact,Facility_Email:acct.email,Facility_Phone:acct.phone,
+    Rider:val('t_rider'),Rider_Phone:val('t_phone')||'(not provided)',
+    Pickup:val('t_from'),Destination:val('t_to'),Date:val('t_date'),Pickup_Time:val('t_time'),
+    Trip_Type:val('t_type'),Mobility:val('t_mob'),
+    Estimated_Miles:val('t_miles')||'(not provided)',Estimated_Fare:fare!=null?('$'+fare.toFixed(2)):'to be confirmed',
+    Notes:val('t_notes')||'(none)',Within_24h:within24?('YES — '+val('t_reason')):'No (>24h ahead)'
+  };
+  fetch('https://formsubmit.co/ajax/'+encodeURIComponent(PRIMARY),{method:'POST',headers:{'Content-Type':'application/json',Accept:'application/json'},body:JSON.stringify(body)})
+    .then(function(r){return r.json().catch(function(){return{};});}).then(function(){tripDone(ref,fare);}).catch(function(){tripDone(ref,fare);});
+}
+function tripDone(ref,fare){
+  var rec={ref:ref,rider:val('t_rider'),riderPhone:val('t_phone'),from:val('t_from'),to:val('t_to'),date:val('t_date'),time:val('t_time'),type:val('t_type'),mob:val('t_mob'),miles:val('t_miles'),fare:fare,notes:val('t_notes'),created:new Date().toISOString(),status:'Received'};
+  trips.unshift(rec);LS.set('gimo_facility_trips',trips);
+  ['t_rider','t_phone','t_from','t_to','t_time','t_miles','t_notes','t_reason'].forEach(function(id){var el=document.getElementById(id);if(el)el.value='';});
+  document.getElementById('warn24').hidden=true;calcFare();
+  document.getElementById('tripBtn').disabled=false;
+  setMsg('tripMsg','✓ Trip '+ref+' submitted — confirmation emailed to '+acct.email+' and GIMO. See “My trips” to pay &amp; confirm.','ok');
+}
+
+var STATUSES=['Received','Assigned','Completed','Cancelled'];
+function statusClass(s){s=(s||'Received').toLowerCase();return s;}
+function renderTrips(){
+  var el=document.getElementById('tripList');
+  if(!trips.length){el.innerHTML='<div class="empty">No trips yet. Create one from “New trip”.</div>';return;}
+  el.innerHTML=trips.map(function(t,i){
+    var pay=(PAY_LINK?('<a class="btn btn-amber sm" target="_blank" rel="noopener" href="'+esc(PAY_LINK)+'">Pay to confirm'+(t.fare?(' · $'+t.fare.toFixed(2)):'')+'</a>'):'<span class="note">Pay by cash/ACH per agreement — GIMO will send any payment link.</span>');
+    var sel='<select onchange="setStatus('+i+',this.value)" style="width:auto;padding:7px 10px;font-size:13px">'+STATUSES.map(function(s){return '<option'+((t.status||'Received')===s?' selected':'')+'>'+s+'</option>';}).join('')+'</select>';
+    return '<div class="trip"><div class="r1"><span class="rider">'+esc(t.rider||'Rider')+'</span><span class="pill '+statusClass(t.status)+'">'+esc(t.status||'Received')+'</span></div>'
+      +'<div class="det">'+esc(t.ref||'')+' · '+esc(t.from||'')+' → '+esc(t.to||'')+'</div>'
+      +'<div class="det">'+esc(t.date||'')+' '+esc(t.time||'')+' · '+esc(t.type||'')+' · '+esc(t.mob||'')+(t.fare?(' · est. $'+t.fare.toFixed(2)):'')+'</div>'
+      +'<div class="acts">'+pay+sel+'</div></div>';
+  }).join('');
+}
+function setStatus(i,s){if(trips[i]){trips[i].status=s;LS.set('gimo_facility_trips',trips);renderTrips();}}
+
+function renderReports(){
+  var total=trips.length;
+  var now=new Date(),thisMonth=trips.filter(function(t){var d=new Date(t.created);return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear();}).length;
+  var completed=trips.filter(function(t){return (t.status||'')==='Completed';}).length;
+  var spend=trips.reduce(function(s,t){return s+(t.fare||0);},0);
+  document.getElementById('kpis').innerHTML=
+    '<div class="kpi"><div class="n">'+total+'</div><div class="l">Total trips</div></div>'
+    +'<div class="kpi"><div class="n">'+thisMonth+'</div><div class="l">This month</div></div>'
+    +'<div class="kpi"><div class="n">'+completed+'</div><div class="l">Completed</div></div>'
+    +'<div class="kpi"><div class="n">$'+spend.toFixed(0)+'</div><div class="l">Est. spend</div></div>';
+  document.getElementById('repBody').innerHTML=trips.length?trips.map(function(t){
+    return '<tr><td>'+esc(t.ref||'')+'</td><td>'+esc(t.rider||'')+'</td><td>'+esc(t.from||'')+' → '+esc(t.to||'')+'</td><td>'+esc(t.date||'')+' '+esc(t.time||'')+'</td><td>'+esc(t.status||'Received')+'</td><td>'+(t.fare?('$'+t.fare.toFixed(2)):'—')+'</td></tr>';
+  }).join(''):'<tr><td colspan="6" class="empty">No trips yet.</td></tr>';
+}
+function exportCsv(){
+  var head=['Ref','Rider','RiderPhone','From','To','Date','Time','Type','Mobility','Miles','EstFare','Status','Created','Notes'];
+  var rows=trips.map(function(t){return [t.ref,t.rider,t.riderPhone,t.from,t.to,t.date,t.time,t.type,t.mob,t.miles,(t.fare||''),t.status,t.created,(t.notes||'').replace(/\n/g,' ')];});
+  var csv=[head].concat(rows).map(function(r){return r.map(function(c){return '"'+String(c==null?'':c).replace(/"/g,'""')+'"';}).join(',');}).join('\n');
+  var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='gimo-facility-trips.csv';a.click();
+}
+
+window.addEventListener('load',function(){var d=document.getElementById('t_date');if(d&&!d.value)d.value=new Date(Date.now()+864e5).toISOString().slice(0,10);renderAcct();});
+</script>
+</body>
+</html>
