@@ -305,7 +305,7 @@ h1,h2,h3,h4{font-weight:600;letter-spacing:.2px}
     <div class="steps" style="margin-top:40px">
       <div class="step"><h3>Enter trip details</h3><p>Pickup, destination, date and time — one-way or round trip.</p></div>
       <div class="step"><h3>Pick mobility &amp; pay</h3><p>Ambulatory or wheelchair, then choose a payment method.</p></div>
-      <div class="step"><h3>We handle the rest</h3><p>A trained driver arrives on time and gets you door-to-door, safely.</p></div>
+      <div class="step"><h3>We handle the rest</h3><p>A trained driver arrives on time and gets you there safely.</p></div>
     </div>
   </div>
 </section>
@@ -410,7 +410,7 @@ var PIX={hero:7551683,g:[7446757,7446775,8088868,8088603,18459193,18459210,75516
 var DEFAULT_CONTACT={phone:"(612) 483-1250",phone2:"(281) 935-9597",email:"onome.hunt@gimocons.com",
   address:"8707 Timber Knoll Drive, Missouri City, TX 77459",hours:"Mon–Sun · 5:00 AM – 11:00 PM · 24/7 scheduling line",
   area:"Greater Houston & surrounding counties (up to 60 mi)",
-  heroTag:"Non-emergency medical transport for seniors, wheelchair users, dialysis and discharge patients — door-to-door, with trained, compassionate drivers.",};
+  heroTag:"Non-emergency medical transport for seniors, wheelchair users, dialysis and discharge patients — with trained, compassionate drivers.",};
 var contact=Object.assign({},DEFAULT_CONTACT,LS.get("gimo_contact",{}));
 var DEFAULT_PRICING={perMile:3.5,wheelchair:75};
 var pricing=Object.assign({},DEFAULT_PRICING,LS.get("gimo_pricing",{}));
@@ -469,12 +469,12 @@ function notify(kind,d){
 }
 
 var services=[
- {ic:'🚶',t:'Ambulatory transport',d:'Door-to-door rides for clients who can walk with little or no assistance.'},
+ {ic:'🚶',t:'Ambulatory transport',d:'Rides for clients who can walk with little or no assistance.'},
  {ic:'♿',t:'Wheelchair-accessible',d:'Lift- and ramp-equipped vans with 4-point securement for a safe ride.',tag:'Popular'},
  {ic:'💧',t:'Dialysis & recurring',d:'Reliable standing schedules for dialysis, therapy and routine treatment.'},
  {ic:'🏥',t:'Hospital discharge',d:'Gentle, timely rides home or to a facility after a hospital stay.'},
  {ic:'👵',t:'Senior & assisted living',d:'Friendly help to appointments, errands and family visits.'}];
-var gallery=[{c:'Wheelchair-accessible rides',big:true},{c:'Spacious, secured interior'},{c:'Hands-on driver assistance'},{c:'On-time to treatment'},{c:'Trusted senior rides'},{c:'Door-to-door care'},{c:'Trained, caring team'},{c:'Comfort every mile'}];
+var gallery=[{c:'Wheelchair-accessible rides',big:true},{c:'Spacious, secured interior'},{c:'Hands-on driver assistance'},{c:'On-time to treatment'},{c:'Trusted senior rides'},{c:'Caring, attentive service'},{c:'Trained, caring team'},{c:'Comfort every mile'}];
 var reels=[{t:'Meet the fleet',x:'Clean, comfortable, accessible'},{t:'Curb-to-curb care',x:'We help every step'},{t:'Secured & safe',x:'4-point wheelchair lock'},{t:'Dialysis days made easy',x:'Standing schedules'},{t:'Independence, delivered',x:'Rides for seniors'},{t:'Our team',x:'Certified & compassionate'}];
 var testimonials=[
  {n:'Marcia T.',r:'Daughter & caregiver',q:'They text me when Mom is picked up and dropped off. The drivers are patient and kind — it takes so much worry off my plate.'},
@@ -484,14 +484,14 @@ var blog=[
  {c:'Basics',t:'What Is Non-Emergency Medical Transport (NEMT)?',rt:'4 min',x:'Who NEMT is for, what it covers, and how it differs from an ambulance.',body:['Non-emergency medical transport (NEMT) provides safe, scheduled rides to and from medical care for people who don’t need an ambulance but can’t easily drive or use standard transport.','It’s ideal for dialysis, chemotherapy, physical therapy, specialist visits, hospital discharge and routine check-ups — especially for seniors and wheelchair users.','Unlike an ambulance, NEMT is planned in advance, far more affordable, and focused on comfort and dignity rather than emergency care.']},
  {c:'Accessibility',t:'Wheelchair-Accessible Vehicles: What to Expect',rt:'5 min',x:'From the lift to 4-point securement — a walk-through of your ride.',body:['Our accessible vans use hydraulic lifts or low-angle ramps so boarding is smooth and stress-free, with no transfers required.','Once aboard, your wheelchair is locked with a four-point securement system and you’re fitted with a lap-and-shoulder belt for full safety.','Drivers are trained in safe loading, tie-downs and gentle handling — and there’s room for a companion to ride along.']},
  {c:'Dialysis',t:'7 Tips to Prepare for Your Dialysis Transport',rt:'4 min',x:'Small steps that make treatment-day rides smoother.',body:['Set a standing schedule so the same pickup time is reserved for every session — no re-booking each week.','Be ready 10 minutes early, keep your phone nearby for driver updates, and bring water and a light snack for after treatment.','Tell dispatch about post-dialysis fatigue so we can plan extra assistance for the ride home.']},
- {c:'Outcomes',t:'How NEMT Reduces Missed Medical Appointments',rt:'3 min',x:'Reliable rides mean better adherence and healthier outcomes.',body:['Missed appointments delay care and drive up costs. Transportation is one of the most common — and most fixable — reasons people don’t show up.','Reliable NEMT closes that gap with on-time, door-to-door service and reminders, improving treatment adherence.','For clinics, that means fuller schedules and better continuity of care for every patient.']},
+ {c:'Outcomes',t:'How NEMT Reduces Missed Medical Appointments',rt:'3 min',x:'Reliable rides mean better adherence and healthier outcomes.',body:['Missed appointments delay care and drive up costs. Transportation is one of the most common — and most fixable — reasons people don’t show up.','Reliable NEMT closes that gap with on-time, dependable service and reminders, improving treatment adherence.','For clinics, that means fuller schedules and better continuity of care for every patient.']},
  {c:'Coverage',t:'Does Medicaid Cover Medical Transportation?',rt:'6 min',x:'A plain-language guide to benefits and eligibility.',body:['Many Medicaid programs include non-emergency medical transportation as a benefit when you have no other way to reach covered care.','Coverage rules vary by state and plan, and some trips need prior authorization from your plan or provider.','Our team can help you check eligibility and coordinate approved trips — just ask when you book.']},
  {c:'Discharge',t:'Safe Hospital Discharge: Getting Home Comfortably',rt:'4 min',x:'What to arrange before you leave the ward.',body:['Book your discharge ride as soon as a time is confirmed so a suitable vehicle is ready when you are.','Share mobility needs — wheelchair or walker — so we send the right vehicle and driver support.','We can wait for paperwork and medications, then get you home and settled safely.']},
  {c:'Safety',t:'Traveling with Oxygen: Our Safety Protocols',rt:'3 min',x:'How we transport clients who use supplemental oxygen.',body:['Portable oxygen is welcome; let dispatch know so the vehicle and securement are prepared in advance.','Cylinders are secured upright and away from heat, and drivers are trained on safe handling and no-smoking policy.','We’ll help you board with your equipment and make sure tubing is clear for the whole trip.']},
  {c:'Seniors',t:'Supporting Seniors: Independence Through Reliable Rides',rt:'4 min',x:'Transportation that keeps older adults connected.',body:['Losing the ability to drive shouldn’t mean losing independence. Dependable rides keep seniors connected to care, community and family.','Our drivers offer friendly, unhurried assistance from the front door to the destination and back.','Recurring bookings make weekly appointments, groceries and visits effortless to plan.']},
  {c:'Caregivers',t:'Caregiver’s Checklist for Booking Medical Transport',rt:'5 min',x:'Everything to have ready for a smooth booking.',body:['Have the pickup and destination addresses, appointment time, and any return time ready before you call or book online.','Note mobility needs, oxygen or equipment, and whether a companion is riding along.','Keep insurance or Medicaid details handy if you’re requesting covered transport, and save your driver-update number.']}];
 var flyers=[
- {t:'Never Miss an Appointment',s:'Door-to-door medical rides, always on time.',c:'#0f2233'},
+ {t:'Never Miss an Appointment',s:'Reliable medical rides, always on time.',c:'#0f2233'},
  {t:'Wheelchair-Accessible Rides',s:'Lift-equipped vans · 4-point securement.',c:'#a9782f'},
  {t:'Dialysis Transport Program',s:'Reliable standing schedules, every session.',c:'#0f2233'},
  {t:'Rides for Seniors',s:'Friendly, patient, door-through-door care.',c:'#a9782f'},
@@ -756,7 +756,7 @@ function proposalBuild(){
   var L=proposalLink(); LS.set('gimo_proposal',{to:L.to,contact:L.contact,note:L.note});
   var url=L.url, e=encodeURIComponent;
   var title='GIMO — Transportation Proposal'+(L.to?(' for '+L.to):'');
-  var text=L.to?((L.contact?('Hi '+L.contact+' — '):'')+'GIMO Consulting Services: safe, door-to-door medical transportation for the residents of '+L.to+'. See our proposal:'):'GIMO Consulting Services — medical transportation proposal:';
+  var text=L.to?((L.contact?('Hi '+L.contact+' — '):'')+'GIMO Consulting Services: safe, reliable medical transportation for the residents of '+L.to+'. See our proposal:'):'GIMO Consulting Services — medical transportation proposal:';
   var full=e(text+' '+url);
   var op=document.getElementById('pr_open'); if(op)op.href=url;
   var out=document.getElementById('pr_out');
