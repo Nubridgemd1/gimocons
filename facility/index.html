@@ -96,22 +96,38 @@
       </div>
     </div>
     <div id="acctForm">
-      <p class="lead">Set up your facility once on this device. Trip confirmations are emailed to your facility email.</p>
-      <div class="two">
-        <div><label>Facility name *</label><input id="a_name" placeholder="e.g. Riverside Care Center"></div>
-        <div><label>Facility email * <span style="font-weight:400;color:var(--muted)">(confirmations sent here)</span></label><input id="a_email" type="email" placeholder="admin@facility.com"></div>
+      <!-- SIGN IN (default for returning facilities) -->
+      <div id="loginForm">
+        <h3 style="font-size:17px;margin:0 0 4px">Sign in to your account</h3>
+        <p class="lead" style="margin-top:4px">Enter the email and password you created.</p>
+        <label>Email (username)</label><input id="l_email" type="email" placeholder="admin@facility.com" autocomplete="username">
+        <label>Password</label><input id="l_pass" type="password" placeholder="Your password" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
+        <div style="margin-top:16px;display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+          <button class="btn btn-primary" onclick="doLogin()">Sign in</button>
+          <span class="note">New facility? <a href="#" onclick="showSignup();return false;">Create your account</a></span>
+        </div>
+        <div class="msg" id="loginMsg"></div>
       </div>
-      <div class="two">
-        <div><label>Contact person *</label><input id="a_contact" placeholder="First Last"></div>
-        <div><label>Facility phone *</label><input id="a_phone" placeholder="(xxx) xxx-xxxx"></div>
+      <!-- CREATE ACCOUNT -->
+      <div id="signupForm" class="hide">
+        <h3 style="font-size:17px;margin:0 0 4px">Create your facility account</h3>
+        <p class="lead" style="margin-top:4px">Set up your facility once — then sign in from any device with your email and password.</p>
+        <div class="two">
+          <div><label>Facility name *</label><input id="a_name" placeholder="e.g. Riverside Care Center"></div>
+          <div><label>Facility email * <span style="font-weight:400;color:var(--muted)">(this is your username)</span></label><input id="a_email" type="email" placeholder="admin@facility.com"></div>
+        </div>
+        <div class="two">
+          <div><label>Contact person *</label><input id="a_contact" placeholder="First Last"></div>
+          <div><label>Facility phone *</label><input id="a_phone" placeholder="(xxx) xxx-xxxx"></div>
+        </div>
+        <label>Facility address</label><div class="acwrap"><input id="a_addr" placeholder="Start typing your facility address…" autocomplete="off" oninput="fsug('a_addr')" onblur="fhide('a_addr')"><div class="fsugbox" id="sug_a_addr"></div></div>
+        <label>Password <span id="passHint" style="font-weight:400;color:var(--muted)">(set a password to sign in from any device)</span></label><input id="a_pass" type="password" placeholder="Choose a password" autocomplete="new-password">
+        <div style="margin-top:16px;display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+          <button class="btn btn-primary" onclick="saveAcct()">Create account</button>
+          <span class="note">Already have an account? <a href="#" onclick="showLogin();return false;">Sign in</a></span>
+        </div>
+        <div class="msg" id="acctMsg"></div>
       </div>
-      <label>Facility address</label><div class="acwrap"><input id="a_addr" placeholder="Start typing your facility address…" autocomplete="off" oninput="fsug('a_addr')" onblur="fhide('a_addr')"><div class="fsugbox" id="sug_a_addr"></div></div>
-      <label>Password <span id="passHint" style="font-weight:400;color:var(--muted)">(optional — set one to sync your trips to GIMO and across devices)</span></label><input id="a_pass" type="password" placeholder="Choose a password" autocomplete="current-password">
-      <div style="margin-top:16px;display:flex;gap:10px;align-items:center;flex-wrap:wrap">
-        <button class="btn btn-primary" onclick="saveAcct()">Save account</button>
-        <span class="note">New partner? <a href="../partner/">Sign the partnership agreement first →</a></span>
-      </div>
-      <div class="msg" id="acctMsg"></div>
     </div>
   </div>
 
@@ -222,8 +238,19 @@ function renderAcct(){
     document.getElementById('dash').classList.add('hide');
   }
 }
-function editAcct(){document.getElementById('a_name').value=acct.name||'';document.getElementById('a_email').value=acct.email||'';document.getElementById('a_contact').value=acct.contact||'';document.getElementById('a_phone').value=acct.phone||'';document.getElementById('a_addr').value=acct.addr||'';document.getElementById('acctView').hidden=true;document.getElementById('acctForm').classList.remove('hide');}
-function signOut(){acct=null;LS.set('gimo_facility',null);trips=[];LS.set('gimo_facility_trips',trips);renderAcct();}
+function editAcct(){document.getElementById('a_name').value=acct.name||'';document.getElementById('a_email').value=acct.email||'';document.getElementById('a_contact').value=acct.contact||'';document.getElementById('a_phone').value=acct.phone||'';document.getElementById('a_addr').value=acct.addr||'';document.getElementById('acctView').hidden=true;document.getElementById('acctForm').classList.remove('hide');showSignup();}
+function signOut(){acct=null;LS.set('gimo_facility',null);trips=[];LS.set('gimo_facility_trips',trips);var le=document.getElementById('l_email'),lp=document.getElementById('l_pass');if(le)le.value='';if(lp)lp.value='';renderAcct();showLogin();setMsg('loginMsg','','');}
+function showLogin(){var l=document.getElementById('loginForm'),s=document.getElementById('signupForm');if(l)l.classList.remove('hide');if(s)s.classList.add('hide');}
+function showSignup(){var l=document.getElementById('loginForm'),s=document.getElementById('signupForm');if(l)l.classList.add('hide');if(s)s.classList.remove('hide');}
+function doLogin(){
+  var email=val('l_email');var pe=document.getElementById('l_pass');var pass=pe?pe.value:'';
+  if(!email||!pass){setMsg('loginMsg','Enter your email and password.','bad');return;}
+  if(!(window.GIMOApi&&GIMOApi.configured())){setMsg('loginMsg','Sign‑in is temporarily unavailable — please try again shortly.','bad');return;}
+  setMsg('loginMsg','Signing in…','');
+  GIMOApi.login({email:email,password:pass}).then(function(r){
+    afterAuth({name:r.name||'',email:r.email||email,contact:'',phone:r.phone||'',addr:''},r,'Signed in — welcome back.');
+  }).catch(function(e){setMsg('loginMsg',(e&&e.message)||'Could not sign in. Check your email and password.','bad');});
+}
 function saveAcct(){
   var name=val('a_name'),email=val('a_email'),contact=val('a_contact'),phone=val('a_phone'),pass=val('a_pass');
   if(!name||!email||!contact||!phone){setMsg('acctMsg','Please complete name, email, contact and phone.','bad');return;}
@@ -376,7 +403,16 @@ function exportCsv(){
 
 window.addEventListener('load',function(){
   var d=document.getElementById('t_date');if(d&&!d.value)d.value=new Date(Date.now()+864e5).toISOString().slice(0,10);
-  if(!acct){try{var q=new URLSearchParams(location.search);var qn=q.get('facility'),qe=q.get('email');if(qn){var en=document.getElementById('a_name');if(en&&!en.value)en.value=qn;}if(qe){var ee=document.getElementById('a_email');if(ee&&!ee.value)ee.value=qe;}}catch(e){}}
+  if(!acct){
+    var hasParams=false;
+    try{var q=new URLSearchParams(location.search);var qn=q.get('facility'),qe=q.get('email');
+      if(qn||qe){ hasParams=true; showSignup();
+        if(qn){var en=document.getElementById('a_name');if(en&&!en.value)en.value=qn;}
+        if(qe){var ee=document.getElementById('a_email');if(ee&&!ee.value)ee.value=qe;var le=document.getElementById('l_email');if(le&&!le.value)le.value=qe;}
+      }
+    }catch(e){}
+    if(!hasParams)showLogin();
+  }
   if(window.GIMOApi&&GIMOApi.configured()){var ph=document.getElementById('passHint');if(ph)ph.textContent='(required — syncs your trips with GIMO and across devices)';}
   renderAcct();
   if(window.GIMOApi&&GIMOApi.configured()){
